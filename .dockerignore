@@ -1,0 +1,16 @@
+# dependencies
+node_modules
+apps/client/node_modules
+apps/server/node_modules
+
+# tooling
+.turbo
+apps/client/.turbo
+apps/server/.turbo
+
+# misc
+npm-debug.log
+
+# build files
+apps/server/dist
+apps/client/dist

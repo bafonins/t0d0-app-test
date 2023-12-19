@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+apps/server/node_modules
+apps/client/node_modules
+
+# IDE
+/.vscode
+
+# misc
+.DS_Store
+npm-debug.log
+/**/npm-debug.log
+
+# tooling
+.turbo
+
+# build files
+apps/server/dist
+apps/client/dist

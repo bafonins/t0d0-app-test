@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "start:dev": "turbo run start:dev",
+    "build": "turbo run build",
+    "start:prod": "npm run build && npm run --workspace server start:prod",
+    "test": "turbo run test",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "husky": "^8.0.3",
+    "turbo": "^1.11.2"
+  },
+  "workspaces": [
+    "apps/*"
+  ]
+}
