@@ -5,8 +5,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { join } from 'path';
+import { TodosModule } from './todos/todos.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { Todo } from './todos/models/todo.model';
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         username: configService.get<string>('POSTGRES_USER', 'admin'),
         password: configService.get<string>('POSTGRES_PASSWORD', '12345'),
         database: configService.get<string>('POSTGRES_DB', 'app-db'),
+        entities: [Todo],
         synchronize: configService.get<string>('NODE_ENV') === 'development',
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
@@ -41,6 +44,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
+    TodosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
