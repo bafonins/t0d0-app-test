@@ -8,19 +8,23 @@ import {
 } from '@nestjs/graphql';
 import { Todo } from './models/todo.model';
 import { TodosService } from './todos.service';
-import { CreateTodoInput } from './dto/create-todo.input';
-import { UpdateTodoInput } from './dto/update-todo.input';
+import { CreateTodoInput } from './inputs/create-todo.input';
+import { UpdateTodoInput } from './inputs/update-todo.input';
+import { TodoList } from './models/todo-list.model';
+import { PaginationInput } from '../common/pagination/inputs/page.input';
 
 @Resolver(() => Todo)
 export class TodoResolver {
   constructor(private readonly todosService: TodosService) {}
 
-  @Query(() => [Todo])
+  @Query(() => TodoList)
   async todos(
     @Args({ name: 'parentId', nullable: true, type: () => String })
     parentId: string | undefined,
-  ): Promise<Todo[]> {
-    return this.todosService.findAll(parentId);
+    @Args('pageData')
+    pageData: PaginationInput,
+  ): Promise<TodoList> {
+    return this.todosService.findAll(parentId, pageData);
   }
 
   @ResolveField('parent', () => Todo)
