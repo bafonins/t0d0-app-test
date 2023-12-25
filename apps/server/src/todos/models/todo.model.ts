@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
 import {
   Entity,
   Column,
@@ -25,9 +25,11 @@ export class Todo {
   completed: boolean;
 
   @CreateDateColumn()
+  @Field(() => GraphQLISODateTime)
   createdAt: Date;
 
   @UpdateDateColumn()
+  @Field(() => GraphQLISODateTime)
   updatedAt: Date;
 
   @ManyToOne((type) => Todo, (todo) => todo.children)

@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Todo } from './models/todo.model';
-import { UpdateTodoInput } from './dto/update-todo.input';
-import { CreateTodoInput } from './dto/create-todo.input';
+import { UpdateTodoInput } from './inputs/update-todo.input';
+import { CreateTodoInput } from './inputs/create-todo.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull } from 'typeorm';
+import { Repository, IsNull, FindOptionsWhere } from 'typeorm';
+import { TodoList } from './models/todo-list.model';
+import { PaginationInput } from '../common/pagination/inputs/page.input';
 
 @Injectable()
 export class TodosService {
@@ -12,10 +14,32 @@ export class TodosService {
     private readonly todoRepository: Repository<Todo>,
   ) {}
 
-  async findAll(parentId?: string): Promise<Todo[]> {
-    return this.todoRepository.find({
-      where: { parent: { id: parentId || IsNull() } },
+  async findAll(
+    parentId: string | undefined,
+    pageData: PaginationInput,
+  ): Promise<TodoList> {
+    const findCondition: FindOptionsWhere<Todo> = {
+      parent: { id: parentId || IsNull() },
+    };
+
+    const [list, count] = await this.todoRepository.findAndCount({
+      where: findCondition,
+      order: {
+        updatedAt: 'DESC',
+      },
+      skip: pageData.page * pageData.take,
+      take: pageData.take,
     });
+
+    const result: TodoList = {
+      list: list,
+      page: {
+        totalCount: count,
+        pageSize: pageData.take,
+        page: pageData.page + 1,
+      },
+    };
+    return result;
   }
 
   async findParent(todoId: string): Promise<Todo | undefined> {

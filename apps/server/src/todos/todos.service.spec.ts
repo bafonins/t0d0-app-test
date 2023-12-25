@@ -3,6 +3,8 @@ import { TodosService } from './todos.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Todo } from './models/todo.model';
 import { DeleteResult, Repository, IsNull } from 'typeorm';
+import { PaginationInput } from '../common/pagination/inputs/page.input';
+import { PaginationInfo } from '../common/pagination/models/page-info.model';
 
 describe('TodosService', () => {
   const todoRepositoryToken: ReturnType<typeof getRepositoryToken> =
@@ -21,6 +23,10 @@ describe('TodosService', () => {
 
     service = module.get<TodosService>(TodosService);
     repository = module.get<Repository<Todo>>(todoRepositoryToken);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -46,22 +52,33 @@ describe('TodosService', () => {
       children: [],
       parent: undefined,
     };
+    const pageData: PaginationInput = {
+      page: 0,
+      take: 10,
+    };
     const testTodos = [fstTodo, sndTodo];
+    const testPageInfo: PaginationInfo = {
+      page: pageData.page + 1,
+      totalCount: testTodos.length,
+      pageSize: pageData.take,
+    };
 
-    it('should call todoRepository find method', async () => {
+    it('should call todoRepository findAndCount method', async () => {
       jest
-        .spyOn(repository, 'find')
-        .mockReturnValueOnce(Promise.resolve(testTodos));
-      await service.findAll();
-      expect(repository.find).toHaveBeenCalledTimes(1);
+        .spyOn(repository, 'findAndCount')
+        .mockReturnValueOnce(Promise.resolve([testTodos, testTodos.length]));
+      await service.findAll(undefined, pageData);
+      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
     });
 
-    it('should pass find options with parent id', async () => {
+    it('should pass  options with parent id', async () => {
       const testId = 'test-id';
-      jest.spyOn(repository, 'find').mockReturnValueOnce(Promise.resolve([]));
-      await service.findAll(testId);
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockReturnValueOnce(Promise.resolve([[], 0]));
+      await service.findAll(testId, pageData);
 
-      expect(repository.find).toHaveBeenCalledWith(
+      expect(repository.findAndCount).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { parent: { id: testId } },
         }),
@@ -69,10 +86,12 @@ describe('TodosService', () => {
     });
 
     it('should pass null find option with empty parent id', async () => {
-      jest.spyOn(repository, 'find').mockReturnValueOnce(Promise.resolve([]));
-      await service.findAll();
+      jest
+        .spyOn(repository, 'findAndCount')
+        .mockReturnValueOnce(Promise.resolve([[], 0]));
+      await service.findAll(undefined, pageData);
 
-      expect(repository.find).toHaveBeenCalledWith(
+      expect(repository.findAndCount).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { parent: { id: IsNull() } },
         }),
@@ -81,11 +100,16 @@ describe('TodosService', () => {
 
     it('should return todos', async () => {
       jest
-        .spyOn(repository, 'find')
-        .mockReturnValueOnce(Promise.resolve(testTodos));
-      const result = await service.findAll();
-      expect(result).toHaveLength(2);
-      expect(result).toEqual(expect.arrayContaining(testTodos));
+        .spyOn(repository, 'findAndCount')
+        .mockReturnValueOnce(Promise.resolve([testTodos, 2]));
+      const result = await service.findAll(undefined, pageData);
+      expect(result.list).toHaveLength(2);
+      expect(result).toEqual(
+        expect.objectContaining({
+          list: testTodos,
+          page: testPageInfo,
+        }),
+      );
     });
   });
 
