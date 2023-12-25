@@ -1,0 +1,20 @@
+# This configuration file tells GraphQL Code Generator how
+# to generate types based on app schema.
+schema: "../../schema-generated.gql"
+overwrite: true
+documents: "src/shared/api/graphql/operations/**/*.ts"
+generates:
+  ./src/__generated__/gql-generated.ts:
+    plugins:
+      - "typescript"
+      - "typescript-operations"
+      - "typescript-react-apollo"
+config:
+  useIndexSignature: true
+  reactApolloVersion: 3
+  immutableTypes: true
+  scalars:
+    String: string
+  withHOC: false
+  withHooks: true
+  withComponent: false
