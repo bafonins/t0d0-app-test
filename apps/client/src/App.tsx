@@ -1,7 +1,8 @@
 import "./App.css";
+import { TodoList } from "@/features/todos/components/TodoList";
 
 function App() {
-  return <div>Vite</div>;
+  return <TodoList />;
 }
 
 export default App;
