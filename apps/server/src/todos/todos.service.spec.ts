@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TodosService } from './todos.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Todo } from './models/todo.model';
-import { DeleteResult, Repository } from 'typeorm';
+import { DeleteResult, Repository, IsNull } from 'typeorm';
 
 describe('TodosService', () => {
   const todoRepositoryToken: ReturnType<typeof getRepositoryToken> =
@@ -54,6 +54,29 @@ describe('TodosService', () => {
         .mockReturnValueOnce(Promise.resolve(testTodos));
       await service.findAll();
       expect(repository.find).toHaveBeenCalledTimes(1);
+    });
+
+    it('should pass find options with parent id', async () => {
+      const testId = 'test-id';
+      jest.spyOn(repository, 'find').mockReturnValueOnce(Promise.resolve([]));
+      await service.findAll(testId);
+
+      expect(repository.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { parent: { id: testId } },
+        }),
+      );
+    });
+
+    it('should pass null find option with empty parent id', async () => {
+      jest.spyOn(repository, 'find').mockReturnValueOnce(Promise.resolve([]));
+      await service.findAll();
+
+      expect(repository.find).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { parent: { id: IsNull() } },
+        }),
+      );
     });
 
     it('should return todos', async () => {

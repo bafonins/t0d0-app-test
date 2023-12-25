@@ -3,7 +3,7 @@ import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './dto/update-todo.input';
 import { CreateTodoInput } from './dto/create-todo.input';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 
 @Injectable()
 export class TodosService {
@@ -12,8 +12,10 @@ export class TodosService {
     private readonly todoRepository: Repository<Todo>,
   ) {}
 
-  async findAll(): Promise<Todo[]> {
-    return this.todoRepository.find();
+  async findAll(parentId?: string): Promise<Todo[]> {
+    return this.todoRepository.find({
+      where: { parent: { id: parentId || IsNull() } },
+    });
   }
 
   async findParent(todoId: string): Promise<Todo | undefined> {
