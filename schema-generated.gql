@@ -1,0 +1,35 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input CreateTodoInput {
+  parent: ParentTodoIdInput
+  title: String!
+}
+
+type Mutation {
+  addTodo(createTodoData: CreateTodoInput!): Todo!
+  updateTodo(id: String!, updateTodoData: UpdateTodoInput!): Todo!
+}
+
+input ParentTodoIdInput {
+  id: ID!
+}
+
+type Query {
+  todos(parentId: String): [Todo!]!
+}
+
+type Todo {
+  children: [Todo!]
+  completed: Boolean!
+  id: ID!
+  parent: Todo
+  title: String!
+}
+
+input UpdateTodoInput {
+  completed: Boolean
+  parent: ParentTodoIdInput
+  title: String
+}

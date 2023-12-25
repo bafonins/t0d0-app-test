@@ -16,8 +16,11 @@ export class TodoResolver {
   constructor(private readonly todosService: TodosService) {}
 
   @Query(() => [Todo])
-  async getTodos(): Promise<Todo[]> {
-    return this.todosService.findAll();
+  async todos(
+    @Args({ name: 'parentId', nullable: true, type: () => String })
+    parentId: string | undefined,
+  ): Promise<Todo[]> {
+    return this.todosService.findAll(parentId);
   }
 
   @ResolveField('parent', () => Todo)

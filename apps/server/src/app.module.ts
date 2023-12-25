@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -34,11 +33,21 @@ import { Todo } from './todos/models/todo.model';
     GraphQLModule.forRootAsync({
       imports: [ConfigModule],
       driver: ApolloDriver,
-      useFactory: async (configService: ConfigService) => ({
-        playground: configService.get<string>('NODE_ENV') === 'development',
-        autoSchemaFile: join(__dirname, 'src/schema.gql'),
-        sortSchema: true,
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const isDev = configService.get<string>('NODE_ENV') === 'development';
+        const schemaFile = configService.get<string>(
+          'GQL_CODEGEN_SCHEMA',
+          'schema-generated.gql',
+        );
+
+        return {
+          playground: isDev,
+          autoSchemaFile: isDev
+            ? join(process.cwd(), '../..', schemaFile)
+            : false,
+          sortSchema: true,
+        };
+      },
       inject: [ConfigService],
     }),
     ServeStaticModule.forRoot({
@@ -46,7 +55,7 @@ import { Todo } from './todos/models/todo.model';
     }),
     TodosModule,
   ],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService],
 })
 export class AppModule {}
