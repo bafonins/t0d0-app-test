@@ -32,11 +32,11 @@ export class Todo {
   @Field(() => GraphQLISODateTime)
   updatedAt: Date;
 
-  @ManyToOne((type) => Todo, (todo) => todo.children)
-  @Field((type) => Todo, { nullable: true })
+  @ManyToOne(() => Todo, (todo) => todo.children)
+  @Field(() => Todo, { nullable: true })
   parent?: Todo;
 
-  @OneToMany((type) => Todo, (todo) => todo.parent)
-  @Field((type) => [Todo], { nullable: true })
+  @OneToMany(() => Todo, (todo) => todo.parent)
+  @Field(() => [Todo], { nullable: true })
   children: Todo[];
 }
