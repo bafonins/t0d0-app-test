@@ -14,6 +14,9 @@ config:
   reactApolloVersion: 3
   immutableTypes: true
   scalars:
+    DateTime: Date
+    Date: Date
+    Time: Date
     String: string
   withHOC: false
   withHooks: true
