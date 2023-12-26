@@ -79,13 +79,18 @@ export enum SortOrder {
 
 export type Todo = {
   readonly __typename?: 'Todo';
-  readonly children?: Maybe<ReadonlyArray<Todo>>;
   readonly completed: Scalars['Boolean']['output'];
   readonly createdAt: Scalars['DateTime']['output'];
   readonly id: Scalars['ID']['output'];
   readonly parent?: Maybe<Todo>;
   readonly title: Scalars['String']['output'];
+  readonly todos: TodoList;
   readonly updatedAt: Scalars['DateTime']['output'];
+};
+
+
+export type TodoTodosArgs = {
+  pageData: PaginationInput;
 };
 
 export type TodoList = {
@@ -107,14 +112,15 @@ export type AddNewTodoMutationVariables = Exact<{
 
 export type AddNewTodoMutation = { readonly __typename?: 'Mutation', readonly addTodo: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean } };
 
-export type GetTodoChildrenQueryVariables = Exact<{
+export type GetTodoListQueryVariables = Exact<{
   parentId?: InputMaybe<Scalars['String']['input']>;
   page: Scalars['Int']['input'];
   take: Scalars['Int']['input'];
+  order?: InputMaybe<SortOrder>;
 }>;
 
 
-export type GetTodoChildrenQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
+export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
 
 
 export const AddNewTodoDocument = gql`
@@ -152,13 +158,18 @@ export function useAddNewTodoMutation(baseOptions?: Apollo.MutationHookOptions<A
 export type AddNewTodoMutationHookResult = ReturnType<typeof useAddNewTodoMutation>;
 export type AddNewTodoMutationResult = Apollo.MutationResult<AddNewTodoMutation>;
 export type AddNewTodoMutationOptions = Apollo.BaseMutationOptions<AddNewTodoMutation, AddNewTodoMutationVariables>;
-export const GetTodoChildrenDocument = gql`
-    query getTodoChildren($parentId: String, $page: Int!, $take: Int!) {
-  todos(parentId: $parentId, pageData: {page: $page, take: $take}) {
+export const GetTodoListDocument = gql`
+    query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder) {
+  todos(parentId: $parentId, pageData: {page: $page, take: $take, order: $order}) {
     list {
       id
       title
       completed
+      todos(pageData: {page: 1, take: 1, order: DESC}) {
+        page {
+          pageCount
+        }
+      }
     }
     page {
       pageCount
@@ -173,36 +184,37 @@ export const GetTodoChildrenDocument = gql`
     `;
 
 /**
- * __useGetTodoChildrenQuery__
+ * __useGetTodoListQuery__
  *
- * To run a query within a React component, call `useGetTodoChildrenQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTodoChildrenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetTodoListQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTodoListQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetTodoChildrenQuery({
+ * const { data, loading, error } = useGetTodoListQuery({
  *   variables: {
  *      parentId: // value for 'parentId'
  *      page: // value for 'page'
  *      take: // value for 'take'
+ *      order: // value for 'order'
  *   },
  * });
  */
-export function useGetTodoChildrenQuery(baseOptions: Apollo.QueryHookOptions<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>) {
+export function useGetTodoListQuery(baseOptions: Apollo.QueryHookOptions<GetTodoListQuery, GetTodoListQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>(GetTodoChildrenDocument, options);
+        return Apollo.useQuery<GetTodoListQuery, GetTodoListQueryVariables>(GetTodoListDocument, options);
       }
-export function useGetTodoChildrenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>) {
+export function useGetTodoListLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTodoListQuery, GetTodoListQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>(GetTodoChildrenDocument, options);
+          return Apollo.useLazyQuery<GetTodoListQuery, GetTodoListQueryVariables>(GetTodoListDocument, options);
         }
-export function useGetTodoChildrenSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>) {
+export function useGetTodoListSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTodoListQuery, GetTodoListQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useSuspenseQuery<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>(GetTodoChildrenDocument, options);
+          return Apollo.useSuspenseQuery<GetTodoListQuery, GetTodoListQueryVariables>(GetTodoListDocument, options);
         }
-export type GetTodoChildrenQueryHookResult = ReturnType<typeof useGetTodoChildrenQuery>;
-export type GetTodoChildrenLazyQueryHookResult = ReturnType<typeof useGetTodoChildrenLazyQuery>;
-export type GetTodoChildrenSuspenseQueryHookResult = ReturnType<typeof useGetTodoChildrenSuspenseQuery>;
-export type GetTodoChildrenQueryResult = Apollo.QueryResult<GetTodoChildrenQuery, GetTodoChildrenQueryVariables>;
+export type GetTodoListQueryHookResult = ReturnType<typeof useGetTodoListQuery>;
+export type GetTodoListLazyQueryHookResult = ReturnType<typeof useGetTodoListLazyQuery>;
+export type GetTodoListSuspenseQueryHookResult = ReturnType<typeof useGetTodoListSuspenseQuery>;
+export type GetTodoListQueryResult = Apollo.QueryResult<GetTodoListQuery, GetTodoListQueryVariables>;

@@ -42,8 +42,8 @@ describe('TodosService', () => {
       completed: false,
       updatedAt: new Date(),
       createdAt: new Date(),
-      children: [],
       parent: undefined,
+      todos: [],
     };
     const sndTodo: Todo = {
       id: 'test-id-2',
@@ -51,8 +51,8 @@ describe('TodosService', () => {
       completed: false,
       updatedAt: new Date(),
       createdAt: new Date(),
-      children: [],
       parent: undefined,
+      todos: [],
     };
     const pageData: PaginationDto = {
       page: 1,

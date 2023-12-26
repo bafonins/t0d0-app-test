@@ -3,7 +3,6 @@ import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { CreateTodoInput } from './inputs/create-todo.input';
 import { TodoList } from './models/todo-list.model';
-import { PaginationInput } from '../common/pagination/inputs/page.input';
 import { PaginationDto } from '../common/pagination/dto/page.dto';
 import { TodosRepository } from './todos.repository';
 
@@ -44,15 +43,6 @@ export class TodosService {
     });
 
     return todo ? todo.parent : undefined;
-  }
-
-  async findChildren(todoId: string): Promise<Todo[]> {
-    const todo = await this.todosRepository.findOne({
-      where: { id: todoId },
-      relations: ['children'],
-    });
-
-    return todo ? todo.children : [];
   }
 
   async create(data: CreateTodoInput): Promise<Todo> {

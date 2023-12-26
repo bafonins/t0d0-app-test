@@ -31,14 +31,21 @@ export class TodoResolver {
     );
   }
 
+  @ResolveField('todos', () => TodoList)
+  async children(
+    @Parent() todo: Todo,
+    @Args('pageData')
+    pageData: PaginationInput,
+  ): Promise<TodoList> {
+    return this.todosService.findAll(
+      todo.id,
+      PaginationDto.fromInput(pageData),
+    );
+  }
+
   @ResolveField('parent', () => Todo)
   async parent(@Parent() childTodo: Todo): Promise<Todo | undefined> {
     return this.todosService.findParent(childTodo.id);
-  }
-
-  @ResolveField('children', () => [Todo])
-  async children(@Parent() parentTodo: Todo): Promise<Todo[]> {
-    return this.todosService.findChildren(parentTodo.id);
   }
 
   @Mutation(() => Todo)
