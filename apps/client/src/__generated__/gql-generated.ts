@@ -43,12 +43,16 @@ export type MutationUpdateTodoArgs = {
 
 export type PaginationInfo = {
   readonly __typename?: 'PaginationInfo';
+  readonly hasNextPage: Scalars['Boolean']['output'];
+  readonly hasPreviousPage: Scalars['Boolean']['output'];
+  readonly itemCount: Scalars['Int']['output'];
   readonly page: Scalars['Int']['output'];
+  readonly pageCount: Scalars['Int']['output'];
   readonly pageSize: Scalars['Int']['output'];
-  readonly totalCount: Scalars['Int']['output'];
 };
 
 export type PaginationInput = {
+  readonly order?: SortOrder;
   readonly page: Scalars['Int']['input'];
   readonly take: Scalars['Int']['input'];
 };
@@ -68,6 +72,11 @@ export type QueryTodosArgs = {
   parentId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export enum SortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
 export type Todo = {
   readonly __typename?: 'Todo';
   readonly children?: Maybe<ReadonlyArray<Todo>>;
@@ -81,7 +90,7 @@ export type Todo = {
 
 export type TodoList = {
   readonly __typename?: 'TodoList';
-  readonly list: ReadonlyArray<Todo>;
+  readonly list?: Maybe<ReadonlyArray<Todo>>;
   readonly page: PaginationInfo;
 };
 
@@ -105,7 +114,7 @@ export type GetTodoChildrenQueryVariables = Exact<{
 }>;
 
 
-export type GetTodoChildrenQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean }>, readonly page: { readonly __typename?: 'PaginationInfo', readonly totalCount: number, readonly page: number, readonly pageSize: number } } };
+export type GetTodoChildrenQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
 
 
 export const AddNewTodoDocument = gql`
@@ -152,9 +161,12 @@ export const GetTodoChildrenDocument = gql`
       completed
     }
     page {
-      totalCount
+      pageCount
+      itemCount
       page
       pageSize
+      hasNextPage
+      hasPreviousPage
     }
   }
 }

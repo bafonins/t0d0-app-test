@@ -12,6 +12,7 @@ import { CreateTodoInput } from './inputs/create-todo.input';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { TodoList } from './models/todo-list.model';
 import { PaginationInput } from '../common/pagination/inputs/page.input';
+import { PaginationDto } from '../common/pagination/dto/page.dto';
 
 @Resolver(() => Todo)
 export class TodoResolver {
@@ -24,7 +25,10 @@ export class TodoResolver {
     @Args('pageData')
     pageData: PaginationInput,
   ): Promise<TodoList> {
-    return this.todosService.findAll(parentId, pageData);
+    return this.todosService.findAll(
+      parentId,
+      PaginationDto.fromInput(pageData),
+    );
   }
 
   @ResolveField('parent', () => Todo)

@@ -7,7 +7,7 @@ import { DEFAULT_TODO_PAGE_SIZE } from "@/constants/pagination";
 const defaultVariables: GetTodoChildrenQueryVariables = {
   parentId: undefined,
   take: DEFAULT_TODO_PAGE_SIZE,
-  page: 0,
+  page: 1,
 };
 
 export const useGetTodoChildrenQuery = (
@@ -23,11 +23,7 @@ export const useGetTodoChildrenQuery = (
 
   return {
     todos: data?.todos.list || [],
-    page: data?.todos.page || {
-      currentPage: variables.page,
-      pageSize: variables.take,
-      totalCount: 0,
-    },
+    page: data?.todos.page,
     loading,
     error,
   };

@@ -2,48 +2,43 @@ import { Injectable } from '@nestjs/common';
 import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { CreateTodoInput } from './inputs/create-todo.input';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, IsNull, FindOptionsWhere } from 'typeorm';
 import { TodoList } from './models/todo-list.model';
 import { PaginationInput } from '../common/pagination/inputs/page.input';
+import { PaginationDto } from '../common/pagination/dto/page.dto';
+import { TodosRepository } from './todos.repository';
 
 @Injectable()
 export class TodosService {
-  constructor(
-    @InjectRepository(Todo)
-    private readonly todoRepository: Repository<Todo>,
-  ) {}
+  constructor(private readonly todosRepository: TodosRepository) {}
 
   async findAll(
     parentId: string | undefined,
-    pageData: PaginationInput,
+    pageData: PaginationDto,
   ): Promise<TodoList> {
-    const findCondition: FindOptionsWhere<Todo> = {
-      parent: { id: parentId || IsNull() },
-    };
-
-    const [list, count] = await this.todoRepository.findAndCount({
-      where: findCondition,
-      order: {
-        updatedAt: 'DESC',
-      },
-      skip: pageData.page * pageData.take,
+    const [entities, itemCount] = await this.todosRepository.findAndCountTodos({
+      parentId: parentId,
+      order: pageData.order,
+      skip: pageData.skip,
       take: pageData.take,
     });
 
+    const pageCount = Math.ceil(itemCount / pageData.take);
     const result: TodoList = {
-      list: list,
+      list: entities,
       page: {
-        totalCount: count,
+        itemCount: itemCount,
+        pageCount: pageCount,
         pageSize: pageData.take,
-        page: pageData.page + 1,
+        page: pageData.page,
+        hasPreviousPage: pageData.page > 1,
+        hasNextPage: pageData.page < pageCount,
       },
     };
     return result;
   }
 
   async findParent(todoId: string): Promise<Todo | undefined> {
-    const todo = await this.todoRepository.findOne({
+    const todo = await this.todosRepository.findOne({
       where: { id: todoId },
       relations: ['parent'],
     });
@@ -52,7 +47,7 @@ export class TodosService {
   }
 
   async findChildren(todoId: string): Promise<Todo[]> {
-    const todo = await this.todoRepository.findOne({
+    const todo = await this.todosRepository.findOne({
       where: { id: todoId },
       relations: ['children'],
     });
@@ -61,22 +56,20 @@ export class TodosService {
   }
 
   async create(data: CreateTodoInput): Promise<Todo> {
-    const todo = await this.todoRepository.save(
-      this.todoRepository.create(data),
-    );
-
-    return todo;
+    return this.todosRepository.createTodo({
+      title: data.title,
+      parentId: data.parent.id,
+    });
   }
 
   async update(id: string, data: UpdateTodoInput): Promise<Todo> {
-    return this.todoRepository.save({
+    return this.todosRepository.save({
       id: id,
       ...data,
     });
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.todoRepository.delete(id);
-    return (result.affected || 0) >= 1;
+    return this.todosRepository.deleteTodo({ id: id });
   }
 }

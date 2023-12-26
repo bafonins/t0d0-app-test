@@ -1,28 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodosService } from './todos.service';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { Todo } from './models/todo.model';
-import { DeleteResult, Repository, IsNull } from 'typeorm';
-import { PaginationInput } from '../common/pagination/inputs/page.input';
+import { DeleteResult, DataSource } from 'typeorm';
+import { PaginationDto } from '../common/pagination/dto/page.dto';
 import { PaginationInfo } from '../common/pagination/models/page-info.model';
+import { SortOrder } from '../common/pagination/const';
+import { TodosRepository } from './todos.repository';
 
 describe('TodosService', () => {
-  const todoRepositoryToken: ReturnType<typeof getRepositoryToken> =
-    getRepositoryToken(Todo);
-
   let service: TodosService;
-  let repository: Repository<Todo>;
+  let repository: TodosRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TodosService,
-        { provide: todoRepositoryToken, useClass: Repository },
+        TodosRepository,
+        {
+          provide: DataSource,
+          useValue: { createEntityManager: jest.fn() },
+        },
       ],
     }).compile();
 
     service = module.get<TodosService>(TodosService);
-    repository = module.get<Repository<Todo>>(todoRepositoryToken);
+    repository = module.get<TodosRepository>(TodosRepository);
   });
 
   afterEach(() => {
@@ -52,55 +54,73 @@ describe('TodosService', () => {
       children: [],
       parent: undefined,
     };
-    const pageData: PaginationInput = {
-      page: 0,
+    const pageData: PaginationDto = {
+      page: 1,
       take: 10,
+      order: SortOrder.DESC,
+      skip: 10,
     };
     const testTodos = [fstTodo, sndTodo];
     const testPageInfo: PaginationInfo = {
-      page: pageData.page + 1,
-      totalCount: testTodos.length,
+      page: pageData.page,
+      itemCount: testTodos.length,
+      pageCount: 1,
       pageSize: pageData.take,
+      hasNextPage: false,
+      hasPreviousPage: false,
     };
 
     it('should call todoRepository findAndCount method', async () => {
       jest
-        .spyOn(repository, 'findAndCount')
+        .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([testTodos, testTodos.length]));
       await service.findAll(undefined, pageData);
-      expect(repository.findAndCount).toHaveBeenCalledTimes(1);
+      expect(repository.findAndCountTodos).toHaveBeenCalledTimes(1);
     });
 
-    it('should pass  options with parent id', async () => {
+    it('should pass options with parent id', async () => {
       const testId = 'test-id';
       jest
-        .spyOn(repository, 'findAndCount')
+        .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([[], 0]));
       await service.findAll(testId, pageData);
 
-      expect(repository.findAndCount).toHaveBeenCalledWith(
+      expect(repository.findAndCountTodos).toHaveBeenCalledWith(
+        expect.objectContaining({ parentId: testId }),
+      );
+    });
+
+    it('should pass undefined find option with empty parent id', async () => {
+      jest
+        .spyOn(repository, 'findAndCountTodos')
+        .mockReturnValueOnce(Promise.resolve([[], 0]));
+      await service.findAll(undefined, pageData);
+
+      expect(repository.findAndCountTodos).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { parent: { id: testId } },
+          parentId: undefined,
         }),
       );
     });
 
-    it('should pass null find option with empty parent id', async () => {
+    it('should pass page options', async () => {
       jest
-        .spyOn(repository, 'findAndCount')
+        .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([[], 0]));
       await service.findAll(undefined, pageData);
 
-      expect(repository.findAndCount).toHaveBeenCalledWith(
+      expect(repository.findAndCountTodos).toHaveBeenCalledWith(
         expect.objectContaining({
-          where: { parent: { id: IsNull() } },
+          skip: pageData.skip,
+          take: pageData.take,
+          order: pageData.order,
         }),
       );
     });
 
     it('should return todos', async () => {
       jest
-        .spyOn(repository, 'findAndCount')
+        .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([testTodos, 2]));
       const result = await service.findAll(undefined, pageData);
       expect(result.list).toHaveLength(2);

@@ -1,12 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ObjectType } from '@nestjs/graphql';
 import { Todo } from './todo.model';
-import { PaginationInfo } from '../../common/pagination/models/page-info.model';
+import { PaginatedList } from '../../common/pagination/models/paginated-list.model';
 
 @ObjectType()
-export class TodoList {
-  @Field(() => [Todo], { defaultValue: [] })
-  list?: Todo[];
-
-  @Field(() => PaginationInfo)
-  page: PaginationInfo;
-}
+export class TodoList extends PaginatedList(Todo) {}

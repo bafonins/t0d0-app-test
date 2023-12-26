@@ -9,9 +9,12 @@ export const GET_TODO_CHILDREN = gql`
         completed
       }
       page {
-        totalCount
+        pageCount
+        itemCount
         page
         pageSize
+        hasNextPage
+        hasPreviousPage
       }
     }
   }
