@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useGetTodoChildrenQuery } from "@/features/todos/hooks/useGetTodoChildrenQuery";
+import { useGetTodoListQuery } from "@/features/todos/hooks/useGetTodoListQuery";
 import { TodoItem } from "@/features/todos/components/TodoItem";
 
 export interface TodoListProps {
@@ -8,7 +8,7 @@ export interface TodoListProps {
 
 export const TodoList: FC<TodoListProps> = (props) => {
   const { parentId } = props;
-  const { todos, loading } = useGetTodoChildrenQuery({
+  const { todos, loading } = useGetTodoListQuery({
     parentId: parentId,
   });
 
@@ -19,7 +19,12 @@ export const TodoList: FC<TodoListProps> = (props) => {
   return (
     <ul>
       {todos.map((todo) => (
-        <TodoItem key={todo.id} id={todo.id} title={todo.title} />
+        <TodoItem
+          key={todo.id}
+          id={todo.id}
+          title={todo.title}
+          hasChildren={todo.todos.page.pageCount > 0}
+        />
       ))}
     </ul>
   );

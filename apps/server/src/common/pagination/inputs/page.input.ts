@@ -1,4 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql';
+import { SortOrder } from '../const';
 
 @InputType()
 export class PaginationInput {
@@ -7,4 +8,7 @@ export class PaginationInput {
 
   @Field(() => Int)
   take: number;
+
+  @Field(() => SortOrder, { defaultValue: SortOrder.DESC })
+  order: SortOrder;
 }

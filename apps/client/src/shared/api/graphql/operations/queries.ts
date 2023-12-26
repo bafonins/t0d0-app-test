@@ -1,17 +1,33 @@
 import { gql } from "@apollo/client";
 
-export const GET_TODO_CHILDREN = gql`
-  query getTodoChildren($parentId: String, $page: Int!, $take: Int!) {
-    todos(parentId: $parentId, pageData: { page: $page, take: $take }) {
+export const GET_TODO_LIST = gql`
+  query getTodoList(
+    $parentId: String
+    $page: Int!
+    $take: Int!
+    $order: SortOrder
+  ) {
+    todos(
+      parentId: $parentId
+      pageData: { page: $page, take: $take, order: $order }
+    ) {
       list {
         id
         title
         completed
+        todos(pageData: { page: 1, take: 1, order: DESC }) {
+          page {
+            pageCount
+          }
+        }
       }
       page {
-        totalCount
+        pageCount
+        itemCount
         page
         pageSize
+        hasNextPage
+        hasPreviousPage
       }
     }
   }

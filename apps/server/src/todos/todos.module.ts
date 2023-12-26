@@ -3,10 +3,11 @@ import { TodoResolver } from './todo.resolver';
 import { TodosService } from './todos.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from './models/todo.model';
+import { TodosRepository } from './todos.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Todo])],
-  providers: [TodoResolver, TodosService],
+  providers: [TodoResolver, TodosService, TodosRepository],
   exports: [],
 })
 export class TodosModule {}
