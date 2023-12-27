@@ -25,7 +25,7 @@ export const useOnTodoUpdatedSubscription = () => {
                 return messageData.completed;
               },
               parent(existingParent) {
-                return messageData.parent?.id || existingParent.id;
+                return messageData.parent?.id || existingParent?.id;
               },
             },
           });
