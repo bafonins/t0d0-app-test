@@ -70,14 +70,14 @@ export class TodoResolver {
   async updateTodo(
     @Args('id') id: string,
     @Args('updateTodoData') updateTodoData: UpdateTodoInput,
-  ): Promise<Todo> {
+  ): Promise<Todo | undefined> {
     return this.todosService.update(id, updateTodoData);
   }
 
   @Subscription(() => TodoSubscriptionMessage, {
     name: TodosService.todoSubscriptionUpdate,
   })
-  subscribeTodoCreated() {
+  subscribeTodoUpdate() {
     return this.pubSubService.subscribe(TodosService.todoSubscriptionUpdate);
   }
 }

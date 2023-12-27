@@ -32,7 +32,7 @@ export class Todo {
   @Field(() => GraphQLISODateTime)
   updatedAt: Date;
 
-  @ManyToOne(() => Todo, (todo) => todo.todos)
+  @ManyToOne(() => Todo, (todo) => todo.todos, { onDelete: 'CASCADE' })
   @Field(() => Todo, { nullable: true })
   parent?: Todo;
 

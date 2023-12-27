@@ -69,20 +69,24 @@ export class TodosService {
     return created;
   }
 
-  async update(id: string, data: UpdateTodoInput): Promise<Todo> {
-    const updated = await this.todosRepository.save({
+  async update(id: string, data: UpdateTodoInput): Promise<Todo | undefined> {
+    const updated = await this.todosRepository.updateTodo({
       id: id,
       ...data,
     });
-    await this.pubSubService.publish<TodoSubscriptionMessage>(
-      TodosService.todoSubscriptionUpdate,
-      {
-        type: TodoSubscriptionType.TODO_UPDATED,
-        data: updated,
-      },
-    );
+    if (updated) {
+      await this.pubSubService.publish<TodoSubscriptionMessage>(
+        TodosService.todoSubscriptionUpdate,
+        {
+          type: TodoSubscriptionType.TODO_UPDATED,
+          data: updated,
+        },
+      );
 
-    return updated;
+      return updated;
+    }
+
+    return undefined;
   }
 
   async delete(id: string): Promise<boolean> {
