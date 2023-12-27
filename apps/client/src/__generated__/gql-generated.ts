@@ -136,6 +136,14 @@ export type AddNewTodoMutationVariables = Exact<{
 
 export type AddNewTodoMutation = { readonly __typename?: 'Mutation', readonly addTodo: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean } };
 
+export type ToggleTodoCompletionMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  completed: Scalars['Boolean']['input'];
+}>;
+
+
+export type ToggleTodoCompletionMutation = { readonly __typename?: 'Mutation', readonly updateTodo: { readonly __typename?: 'Todo', readonly id: string, readonly completed: boolean } };
+
 export type GetTodoListQueryVariables = Exact<{
   parentId?: InputMaybe<Scalars['String']['input']>;
   page: Scalars['Int']['input'];
@@ -187,6 +195,41 @@ export function useAddNewTodoMutation(baseOptions?: Apollo.MutationHookOptions<A
 export type AddNewTodoMutationHookResult = ReturnType<typeof useAddNewTodoMutation>;
 export type AddNewTodoMutationResult = Apollo.MutationResult<AddNewTodoMutation>;
 export type AddNewTodoMutationOptions = Apollo.BaseMutationOptions<AddNewTodoMutation, AddNewTodoMutationVariables>;
+export const ToggleTodoCompletionDocument = gql`
+    mutation toggleTodoCompletion($id: String!, $completed: Boolean!) {
+  updateTodo(id: $id, updateTodoData: {completed: $completed}) {
+    id
+    completed
+  }
+}
+    `;
+export type ToggleTodoCompletionMutationFn = Apollo.MutationFunction<ToggleTodoCompletionMutation, ToggleTodoCompletionMutationVariables>;
+
+/**
+ * __useToggleTodoCompletionMutation__
+ *
+ * To run a mutation, you first call `useToggleTodoCompletionMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useToggleTodoCompletionMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [toggleTodoCompletionMutation, { data, loading, error }] = useToggleTodoCompletionMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      completed: // value for 'completed'
+ *   },
+ * });
+ */
+export function useToggleTodoCompletionMutation(baseOptions?: Apollo.MutationHookOptions<ToggleTodoCompletionMutation, ToggleTodoCompletionMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ToggleTodoCompletionMutation, ToggleTodoCompletionMutationVariables>(ToggleTodoCompletionDocument, options);
+      }
+export type ToggleTodoCompletionMutationHookResult = ReturnType<typeof useToggleTodoCompletionMutation>;
+export type ToggleTodoCompletionMutationResult = Apollo.MutationResult<ToggleTodoCompletionMutation>;
+export type ToggleTodoCompletionMutationOptions = Apollo.BaseMutationOptions<ToggleTodoCompletionMutation, ToggleTodoCompletionMutationVariables>;
 export const GetTodoListDocument = gql`
     query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder) {
   todos(parentId: $parentId, pageData: {page: $page, take: $take, order: $order}) {

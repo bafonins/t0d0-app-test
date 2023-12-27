@@ -24,6 +24,7 @@ export const TodoList: FC<TodoListProps> = (props) => {
           id={todo.id}
           title={todo.title}
           hasChildren={todo.todos.page.pageCount > 0}
+          isCompleted={todo.completed}
         />
       ))}
     </ul>
