@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TodosModule } from './todos/todos.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from './todos/models/todo.model';
+import { PubSubModule } from './common/pubsub/pubsub.module';
 
 @Module({
   imports: [
@@ -30,7 +30,7 @@ import { Todo } from './todos/models/todo.model';
       }),
       inject: [ConfigService],
     }),
-    GraphQLModule.forRootAsync({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       imports: [ConfigModule],
       driver: ApolloDriver,
       useFactory: async (configService: ConfigService) => {
@@ -41,6 +41,15 @@ import { Todo } from './todos/models/todo.model';
         );
 
         return {
+          installSubscriptionHandlers: true,
+          subscriptions: {
+            /*
+              Use for backwards compatibility with GraphQL playground for
+              development purposes.
+            */
+            'subscriptions-transport-ws': isDev,
+            'graphql-ws': !isDev,
+          },
           playground: isDev,
           autoSchemaFile: isDev
             ? join(process.cwd(), '../..', schemaFile)
@@ -54,8 +63,9 @@ import { Todo } from './todos/models/todo.model';
       rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
     TodosModule,
+    PubSubModule,
   ],
   controllers: [],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}
