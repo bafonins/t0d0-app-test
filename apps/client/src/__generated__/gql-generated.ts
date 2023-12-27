@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
+import { FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy } from '@apollo/client/cache';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -27,12 +28,18 @@ export type CreateTodoInput = {
 export type Mutation = {
   readonly __typename?: 'Mutation';
   readonly addTodo: Todo;
+  readonly deleteTodo: Scalars['Boolean']['output'];
   readonly updateTodo: Todo;
 };
 
 
 export type MutationAddTodoArgs = {
   createTodoData: CreateTodoInput;
+};
+
+
+export type MutationDeleteTodoArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -77,6 +84,11 @@ export enum SortOrder {
   Desc = 'DESC'
 }
 
+export type Subscription = {
+  readonly __typename?: 'Subscription';
+  readonly todoSubscriptionUpdate: TodoSubscriptionMessage;
+};
+
 export type Todo = {
   readonly __typename?: 'Todo';
   readonly completed: Scalars['Boolean']['output'];
@@ -98,6 +110,18 @@ export type TodoList = {
   readonly list?: Maybe<ReadonlyArray<Todo>>;
   readonly page: PaginationInfo;
 };
+
+export type TodoSubscriptionMessage = {
+  readonly __typename?: 'TodoSubscriptionMessage';
+  readonly data?: Maybe<Todo>;
+  readonly type: TodoSubscriptionType;
+};
+
+export enum TodoSubscriptionType {
+  TodoCreated = 'TODO_CREATED',
+  TodoDeleted = 'TODO_DELETED',
+  TodoUpdated = 'TODO_UPDATED'
+}
 
 export type UpdateTodoInput = {
   readonly completed?: InputMaybe<Scalars['Boolean']['input']>;
@@ -121,6 +145,11 @@ export type GetTodoListQueryVariables = Exact<{
 
 
 export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
+
+export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type OnTodoUpdatedSubscription = { readonly __typename?: 'Subscription', readonly todoSubscriptionUpdate: { readonly __typename?: 'TodoSubscriptionMessage', readonly type: TodoSubscriptionType, readonly data?: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly updatedAt: Date, readonly parent?: { readonly __typename?: 'Todo', readonly id: string } | null } | null } };
 
 
 export const AddNewTodoDocument = gql`
@@ -218,3 +247,115 @@ export type GetTodoListQueryHookResult = ReturnType<typeof useGetTodoListQuery>;
 export type GetTodoListLazyQueryHookResult = ReturnType<typeof useGetTodoListLazyQuery>;
 export type GetTodoListSuspenseQueryHookResult = ReturnType<typeof useGetTodoListSuspenseQuery>;
 export type GetTodoListQueryResult = Apollo.QueryResult<GetTodoListQuery, GetTodoListQueryVariables>;
+export const OnTodoUpdatedDocument = gql`
+    subscription onTodoUpdated {
+  todoSubscriptionUpdate {
+    data {
+      id
+      title
+      completed
+      updatedAt
+      parent {
+        id
+      }
+    }
+    type
+  }
+}
+    `;
+
+/**
+ * __useOnTodoUpdatedSubscription__
+ *
+ * To run a query within a React component, call `useOnTodoUpdatedSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useOnTodoUpdatedSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useOnTodoUpdatedSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useOnTodoUpdatedSubscription(baseOptions?: Apollo.SubscriptionHookOptions<OnTodoUpdatedSubscription, OnTodoUpdatedSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<OnTodoUpdatedSubscription, OnTodoUpdatedSubscriptionVariables>(OnTodoUpdatedDocument, options);
+      }
+export type OnTodoUpdatedSubscriptionHookResult = ReturnType<typeof useOnTodoUpdatedSubscription>;
+export type OnTodoUpdatedSubscriptionResult = Apollo.SubscriptionResult<OnTodoUpdatedSubscription>;
+export type MutationKeySpecifier = ('addTodo' | 'deleteTodo' | 'updateTodo' | MutationKeySpecifier)[];
+export type MutationFieldPolicy = {
+	addTodo?: FieldPolicy<any> | FieldReadFunction<any>,
+	deleteTodo?: FieldPolicy<any> | FieldReadFunction<any>,
+	updateTodo?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type PaginationInfoKeySpecifier = ('hasNextPage' | 'hasPreviousPage' | 'itemCount' | 'page' | 'pageCount' | 'pageSize' | PaginationInfoKeySpecifier)[];
+export type PaginationInfoFieldPolicy = {
+	hasNextPage?: FieldPolicy<any> | FieldReadFunction<any>,
+	hasPreviousPage?: FieldPolicy<any> | FieldReadFunction<any>,
+	itemCount?: FieldPolicy<any> | FieldReadFunction<any>,
+	page?: FieldPolicy<any> | FieldReadFunction<any>,
+	pageCount?: FieldPolicy<any> | FieldReadFunction<any>,
+	pageSize?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type QueryKeySpecifier = ('todos' | QueryKeySpecifier)[];
+export type QueryFieldPolicy = {
+	todos?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type SubscriptionKeySpecifier = ('todoSubscriptionUpdate' | SubscriptionKeySpecifier)[];
+export type SubscriptionFieldPolicy = {
+	todoSubscriptionUpdate?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type TodoKeySpecifier = ('completed' | 'createdAt' | 'id' | 'parent' | 'title' | 'todos' | 'updatedAt' | TodoKeySpecifier)[];
+export type TodoFieldPolicy = {
+	completed?: FieldPolicy<any> | FieldReadFunction<any>,
+	createdAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	parent?: FieldPolicy<any> | FieldReadFunction<any>,
+	title?: FieldPolicy<any> | FieldReadFunction<any>,
+	todos?: FieldPolicy<any> | FieldReadFunction<any>,
+	updatedAt?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type TodoListKeySpecifier = ('list' | 'page' | TodoListKeySpecifier)[];
+export type TodoListFieldPolicy = {
+	list?: FieldPolicy<any> | FieldReadFunction<any>,
+	page?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type TodoSubscriptionMessageKeySpecifier = ('data' | 'type' | TodoSubscriptionMessageKeySpecifier)[];
+export type TodoSubscriptionMessageFieldPolicy = {
+	data?: FieldPolicy<any> | FieldReadFunction<any>,
+	type?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type StrictTypedTypePolicies = {
+	Mutation?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
+		fields?: MutationFieldPolicy,
+	},
+	PaginationInfo?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | PaginationInfoKeySpecifier | (() => undefined | PaginationInfoKeySpecifier),
+		fields?: PaginationInfoFieldPolicy,
+	},
+	Query?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | QueryKeySpecifier | (() => undefined | QueryKeySpecifier),
+		fields?: QueryFieldPolicy,
+	},
+	Subscription?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | SubscriptionKeySpecifier | (() => undefined | SubscriptionKeySpecifier),
+		fields?: SubscriptionFieldPolicy,
+	},
+	Todo?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | TodoKeySpecifier | (() => undefined | TodoKeySpecifier),
+		fields?: TodoFieldPolicy,
+	},
+	TodoList?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | TodoListKeySpecifier | (() => undefined | TodoListKeySpecifier),
+		fields?: TodoListFieldPolicy,
+	},
+	TodoSubscriptionMessage?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | TodoSubscriptionMessageKeySpecifier | (() => undefined | TodoSubscriptionMessageKeySpecifier),
+		fields?: TodoSubscriptionMessageFieldPolicy,
+	}
+};
+export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;

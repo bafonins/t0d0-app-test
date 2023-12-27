@@ -9,6 +9,7 @@ generates:
       - "typescript"
       - "typescript-operations"
       - "typescript-react-apollo"
+      - "typescript-apollo-client-helpers"
 config:
   useIndexSignature: true
   reactApolloVersion: 3

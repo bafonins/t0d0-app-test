@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodosService } from './todos.service';
 import { Todo } from './models/todo.model';
-import { DeleteResult, DataSource } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { PaginationDto } from '../common/pagination/dto/page.dto';
 import { PaginationInfo } from '../common/pagination/models/page-info.model';
 import { SortOrder } from '../common/pagination/const';
 import { TodosRepository } from './todos.repository';
+import { PubSubService } from '../common/pubsub/pubsub.service';
+import { PubSub } from '../common/pubsub/pubsub';
 
 describe('TodosService', () => {
   let service: TodosService;
@@ -16,9 +18,14 @@ describe('TodosService', () => {
       providers: [
         TodosService,
         TodosRepository,
+        PubSubService,
         {
           provide: DataSource,
           useValue: { createEntityManager: jest.fn() },
+        },
+        {
+          provide: 'PUB_SUB',
+          useValue: new PubSub(),
         },
       ],
     }).compile();
@@ -134,38 +141,41 @@ describe('TodosService', () => {
   });
 
   describe('delete', () => {
-    const success: DeleteResult = {
-      affected: 1,
-      raw: [],
-    };
-    const failure: DeleteResult = {
-      affected: 0,
-      raw: [],
+    const todo: Todo = {
+      id: 'test-id',
+      title: 'Test Todo title',
+      completed: false,
+      updatedAt: new Date(),
+      createdAt: new Date(),
+      parent: undefined,
+      todos: [],
     };
 
     it('should call todoRepository delete', async () => {
-      const testId = 'test-id';
+      const testId = todo.id;
       jest
-        .spyOn(repository, 'delete')
-        .mockReturnValueOnce(Promise.resolve(success));
+        .spyOn(repository, 'deleteTodo')
+        .mockReturnValueOnce(Promise.resolve(todo));
       await service.delete(testId);
-      expect(repository.delete).toHaveBeenCalledWith(testId);
+      expect(repository.deleteTodo).toHaveBeenCalledWith(
+        expect.objectContaining({ id: testId }),
+      );
     });
 
     it('should return true on successful deletion', async () => {
-      const testId = 'test-id';
+      const testId = todo.id;
       jest
-        .spyOn(repository, 'delete')
-        .mockReturnValueOnce(Promise.resolve(success));
+        .spyOn(repository, 'deleteTodo')
+        .mockReturnValueOnce(Promise.resolve(todo));
       const result = await service.delete(testId);
       expect(result).toBe(true);
     });
 
-    it('should return false on successful deletion', async () => {
-      const testId = 'test-id';
+    it('should return false on failed deletion', async () => {
+      const testId = 'does-not-exist-todo-id';
       jest
-        .spyOn(repository, 'delete')
-        .mockReturnValueOnce(Promise.resolve(failure));
+        .spyOn(repository, 'deleteTodo')
+        .mockReturnValueOnce(Promise.resolve(undefined));
       const result = await service.delete(testId);
       expect(result).toBe(false);
     });

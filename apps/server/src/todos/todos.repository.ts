@@ -19,6 +19,13 @@ export interface DeleteTodoProps {
   readonly id: string;
 }
 
+export interface UpdateTodoProps {
+  id: string;
+  title?: string;
+  completed?: boolean;
+  parent?: { id: string };
+}
+
 @Injectable()
 export class TodosRepository extends Repository<Todo> {
   constructor(dataSource: DataSource) {
@@ -53,8 +60,30 @@ export class TodosRepository extends Repository<Todo> {
     return todo;
   }
 
-  async deleteTodo(props: DeleteTodoProps): Promise<boolean> {
-    const result = await this.delete(props.id);
-    return (result.affected || 0) >= 1;
+  async updateTodo(props: UpdateTodoProps): Promise<Todo | undefined> {
+    const { id, ...todoDiff } = props;
+
+    const todo = await this.findOne({
+      where: { id: id },
+    });
+    if (todo) {
+      Object.assign(todo, todoDiff);
+      return this.save(todo);
+    }
+
+    return undefined;
+  }
+
+  async deleteTodo(props: DeleteTodoProps): Promise<Todo | undefined> {
+    const todo = await this.find({ where: { id: props.id } });
+    const result = await this.remove(todo);
+
+    const deletedTodo = result[0];
+    if (deletedTodo) {
+      deletedTodo.id = props.id;
+      return deletedTodo;
+    }
+
+    return undefined;
   }
 }
