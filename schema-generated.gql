@@ -14,6 +14,7 @@ scalar DateTime
 
 type Mutation {
   addTodo(createTodoData: CreateTodoInput!): Todo!
+  deleteTodo(id: String!): Boolean!
   updateTodo(id: String!, updateTodoData: UpdateTodoInput!): Todo!
 }
 
@@ -45,6 +46,10 @@ enum SortOrder {
   DESC
 }
 
+type Subscription {
+  todoSubscriptionUpdate: TodoSubscriptionMessage!
+}
+
 type Todo {
   completed: Boolean!
   createdAt: DateTime!
@@ -58,6 +63,17 @@ type Todo {
 type TodoList {
   list: [Todo!]
   page: PaginationInfo!
+}
+
+type TodoSubscriptionMessage {
+  data: Todo
+  type: TodoSubscriptionType!
+}
+
+enum TodoSubscriptionType {
+  TODO_CREATED
+  TODO_DELETED
+  TODO_UPDATED
 }
 
 input UpdateTodoInput {

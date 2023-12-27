@@ -5,6 +5,7 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
 import { Todo } from './models/todo.model';
 import { TodosService } from './todos.service';
@@ -13,10 +14,15 @@ import { UpdateTodoInput } from './inputs/update-todo.input';
 import { TodoList } from './models/todo-list.model';
 import { PaginationInput } from '../common/pagination/inputs/page.input';
 import { PaginationDto } from '../common/pagination/dto/page.dto';
+import { PubSubService } from '../common/pubsub/pubsub.service';
+import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 
 @Resolver(() => Todo)
 export class TodoResolver {
-  constructor(private readonly todosService: TodosService) {}
+  constructor(
+    private readonly todosService: TodosService,
+    private readonly pubSubService: PubSubService,
+  ) {}
 
   @Query(() => TodoList)
   async todos(
@@ -55,11 +61,23 @@ export class TodoResolver {
     return this.todosService.create(createTodoData);
   }
 
+  @Mutation(() => Boolean)
+  async deleteTodo(@Args('id') id: string): Promise<boolean> {
+    return this.todosService.delete(id);
+  }
+
   @Mutation(() => Todo)
   async updateTodo(
     @Args('id') id: string,
     @Args('updateTodoData') updateTodoData: UpdateTodoInput,
   ): Promise<Todo> {
     return this.todosService.update(id, updateTodoData);
+  }
+
+  @Subscription(() => TodoSubscriptionMessage, {
+    name: TodosService.todoSubscriptionUpdate,
+  })
+  subscribeTodoCreated() {
+    return this.pubSubService.subscribe(TodosService.todoSubscriptionUpdate);
   }
 }

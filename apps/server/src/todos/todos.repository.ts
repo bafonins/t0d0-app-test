@@ -53,8 +53,16 @@ export class TodosRepository extends Repository<Todo> {
     return todo;
   }
 
-  async deleteTodo(props: DeleteTodoProps): Promise<boolean> {
-    const result = await this.delete(props.id);
-    return (result.affected || 0) >= 1;
+  async deleteTodo(props: DeleteTodoProps): Promise<Todo | undefined> {
+    const todo = await this.find({ where: { id: props.id } });
+    const result = await this.remove(todo);
+
+    const deletedTodo = result[0];
+    if (deletedTodo) {
+      deletedTodo.id = props.id;
+      return deletedTodo;
+    }
+
+    return undefined;
   }
 }
