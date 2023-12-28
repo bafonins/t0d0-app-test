@@ -6,6 +6,7 @@ import {
   NewTodoInput,
   NewTodoInputProps,
 } from "@/features/todos/components/NewTodoInput";
+import { Pagination } from "@/shared/components/Pagination";
 
 export interface TodoListProps {
   readonly parentId?: string;
@@ -14,7 +15,7 @@ export interface TodoListProps {
 export const TodoList: FC<TodoListProps> = (props) => {
   const { parentId } = props;
 
-  const { todos, loading, refetchTodoList } = useGetTodoListQuery({
+  const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
   });
   const { addNewTodo } = useAddNewTodoMutation(refetchTodoList);
@@ -24,6 +25,16 @@ export const TodoList: FC<TodoListProps> = (props) => {
     },
     [addNewTodo]
   );
+  const handleNextPageChange = useCallback(() => {
+    if (page?.hasNextPage) {
+      refetchTodoList({ parentId: parentId, page: (page?.page || 1) + 1 });
+    }
+  }, [refetchTodoList, page, parentId]);
+  const handlePreviousPageChange = useCallback(() => {
+    if (page?.hasPreviousPage) {
+      refetchTodoList({ parentId: parentId, page: (page?.page || 1) - 1 });
+    }
+  }, [refetchTodoList, page, parentId]);
 
   if (loading) {
     return null;
@@ -43,6 +54,13 @@ export const TodoList: FC<TodoListProps> = (props) => {
           />
         ))}
       </ul>
+      <Pagination
+        hasNextPage={page?.hasNextPage}
+        hasPreviousPage={page?.hasPreviousPage}
+        currentPage={page?.page}
+        onNextPage={handleNextPageChange}
+        onPreviousPage={handlePreviousPageChange}
+      />
     </div>
   );
 };

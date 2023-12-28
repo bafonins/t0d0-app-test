@@ -3,12 +3,12 @@ import {
   GetTodoListQueryVariables,
   SortOrder,
 } from "@gql/gql-generated";
-import { DEFAULT_TODO_PAGE_SIZE } from "@/constants/pagination";
+import { DEFAULT_TODO_PAGE_SIZE, DEFAULT_PAGE } from "@/constants/pagination";
 
 const defaultVariables: GetTodoListQueryVariables = {
   parentId: undefined,
   take: DEFAULT_TODO_PAGE_SIZE,
-  page: 1,
+  page: DEFAULT_PAGE,
   order: SortOrder.Desc,
 };
 
