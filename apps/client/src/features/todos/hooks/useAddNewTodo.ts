@@ -12,9 +12,9 @@ export const useAddNewTodoMutation = (
     useGeneratedAddNewTodoMutation();
 
   const addNewTodo = useCallback(
-    async (variables: AddNewTodoMutationVariables) => {
+    async (variables: AddNewTodoMutationVariables["createTodoInput"]) => {
       const result = await mutateFunction({
-        variables: variables,
+        variables: { createTodoInput: variables },
       });
       refetchTodoList();
       return result;
