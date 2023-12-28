@@ -19,14 +19,14 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
   const { id, title, hasChildren, isCompleted } = props;
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
-  const { toggleTodoCompletion } = useToggleTodoCompletionMutation({
-    id: id,
-    completed: !isCompleted,
-  });
+  const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
   const handleTodoCompletionChange: ChangeEventHandler<HTMLInputElement> =
     useCallback(() => {
-      toggleTodoCompletion();
-    }, [toggleTodoCompletion]);
+      toggleTodoCompletion({
+        id: id,
+        completed: !isCompleted,
+      });
+    }, [toggleTodoCompletion, id, isCompleted]);
   const handleClick: MouseEventHandler<HTMLLIElement> = useCallback(() => {
     if (hasChildren) {
       setIsExpanded((isExpanded) => !isExpanded);
