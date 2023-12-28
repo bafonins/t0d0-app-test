@@ -28,18 +28,16 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
       });
     }, [toggleTodoCompletion, id, isCompleted]);
   const handleClick: MouseEventHandler<HTMLLIElement> = useCallback(() => {
-    if (hasChildren) {
-      setIsExpanded((isExpanded) => !isExpanded);
-    }
-  }, [setIsExpanded, hasChildren]);
+    setIsExpanded((isExpanded) => !isExpanded);
+  }, [setIsExpanded]);
 
-  let expandIndicator = null;
+  let indicator = null;
   if (hasChildren) {
-    expandIndicator = isExpanded ? "👆" : "👇";
+    indicator = isExpanded ? "👆" : "👇";
   }
 
   return (
-    <li style={hasChildren ? { cursor: "pointer" } : { cursor: "initial" }}>
+    <li style={{ cursor: "pointer" }}>
       <input
         type="checkbox"
         checked={isCompleted}
@@ -51,9 +49,9 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
       >
         {title}
       </span>
-      {expandIndicator && (
+      {indicator && (
         <span style={{ marginLeft: "8px", cursor: "initial" }}>
-          {expandIndicator}
+          {indicator}
         </span>
       )}
       {isExpanded && <TodoList parentId={id} />}

@@ -18,12 +18,16 @@ export const TodoList: FC<TodoListProps> = (props) => {
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
   });
+
   const { addNewTodo } = useAddNewTodoMutation(refetchTodoList);
   const handleAddNewTodo: NewTodoInputProps["onSubmit"] = useCallback(
     (title) => {
-      addNewTodo({ title: title });
+      addNewTodo({
+        title: title,
+        ...(parentId ? { parent: { id: parentId } } : {}),
+      });
     },
-    [addNewTodo]
+    [addNewTodo, parentId]
   );
   const handleNextPageChange = useCallback(() => {
     if (page?.hasNextPage) {

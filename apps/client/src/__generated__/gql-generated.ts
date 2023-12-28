@@ -130,7 +130,7 @@ export type UpdateTodoInput = {
 };
 
 export type AddNewTodoMutationVariables = Exact<{
-  title: Scalars['String']['input'];
+  createTodoInput: CreateTodoInput;
 }>;
 
 
@@ -161,8 +161,8 @@ export type OnTodoUpdatedSubscription = { readonly __typename?: 'Subscription', 
 
 
 export const AddNewTodoDocument = gql`
-    mutation addNewTodo($title: String!) {
-  addTodo(createTodoData: {title: $title}) {
+    mutation addNewTodo($createTodoInput: CreateTodoInput!) {
+  addTodo(createTodoData: $createTodoInput) {
     id
     title
     completed
@@ -184,7 +184,7 @@ export type AddNewTodoMutationFn = Apollo.MutationFunction<AddNewTodoMutation, A
  * @example
  * const [addNewTodoMutation, { data, loading, error }] = useAddNewTodoMutation({
  *   variables: {
- *      title: // value for 'title'
+ *      createTodoInput: // value for 'createTodoInput'
  *   },
  * });
  */
