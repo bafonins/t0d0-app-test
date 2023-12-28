@@ -19,11 +19,12 @@ export const useGetTodoListQuery = (
     ...defaultVariables,
     ...args,
   };
-  const { data, loading, error } = useGeneratedGetTodoListQuery({
+  const { data, loading, error, refetch } = useGeneratedGetTodoListQuery({
     variables: variables,
   });
 
   return {
+    refetchTodoList: refetch,
     todos: data?.todos.list || [],
     page: data?.todos.page,
     loading,
