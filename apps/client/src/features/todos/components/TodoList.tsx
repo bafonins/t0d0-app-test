@@ -6,6 +6,7 @@ import {
   NewTodoInput,
   NewTodoInputProps,
 } from "@/features/todos/components/NewTodoInput";
+import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/Pagination";
 
 export interface TodoListProps {
@@ -29,6 +30,7 @@ export const TodoList: FC<TodoListProps> = (props) => {
     },
     [addNewTodo, parentId]
   );
+  const { removeTodo } = useRemoveTodoMutation(refetchTodoList);
   const handleNextPageChange = useCallback(() => {
     if (page?.hasNextPage) {
       refetchTodoList({ parentId: parentId, page: (page?.page || 1) + 1 });
@@ -55,6 +57,7 @@ export const TodoList: FC<TodoListProps> = (props) => {
             title={todo.title}
             hasChildren={todo.todos.page.pageCount > 0}
             isCompleted={todo.completed}
+            onRemove={removeTodo}
           />
         ))}
       </ul>
