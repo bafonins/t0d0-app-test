@@ -13,10 +13,11 @@ export interface TodoItemProps {
   readonly title: string;
   readonly hasChildren: boolean;
   readonly isCompleted: boolean;
+  readonly onRemove: (id: string) => void;
 }
 
 export const TodoItem: FC<TodoItemProps> = (props) => {
-  const { id, title, hasChildren, isCompleted } = props;
+  const { id, title, hasChildren, isCompleted, onRemove } = props;
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
@@ -27,6 +28,9 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
         completed: !isCompleted,
       });
     }, [toggleTodoCompletion, id, isCompleted]);
+  const handleRemoval = useCallback(() => {
+    onRemove(id);
+  }, [id, onRemove]);
   const handleClick: MouseEventHandler<HTMLLIElement> = useCallback(() => {
     setIsExpanded((isExpanded) => !isExpanded);
   }, [setIsExpanded]);
@@ -54,6 +58,9 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
           {indicator}
         </span>
       )}
+      <button style={{ marginLeft: "8px" }} onClick={handleRemoval}>
+        delete
+      </button>
       {isExpanded && <TodoList parentId={id} />}
     </li>
   );

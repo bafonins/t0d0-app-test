@@ -144,6 +144,13 @@ export type ToggleTodoCompletionMutationVariables = Exact<{
 
 export type ToggleTodoCompletionMutation = { readonly __typename?: 'Mutation', readonly updateTodo: { readonly __typename?: 'Todo', readonly id: string, readonly completed: boolean } };
 
+export type RemoveTodoMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type RemoveTodoMutation = { readonly __typename?: 'Mutation', readonly deleteTodo: boolean };
+
 export type GetTodoListQueryVariables = Exact<{
   parentId?: InputMaybe<Scalars['String']['input']>;
   page: Scalars['Int']['input'];
@@ -230,6 +237,37 @@ export function useToggleTodoCompletionMutation(baseOptions?: Apollo.MutationHoo
 export type ToggleTodoCompletionMutationHookResult = ReturnType<typeof useToggleTodoCompletionMutation>;
 export type ToggleTodoCompletionMutationResult = Apollo.MutationResult<ToggleTodoCompletionMutation>;
 export type ToggleTodoCompletionMutationOptions = Apollo.BaseMutationOptions<ToggleTodoCompletionMutation, ToggleTodoCompletionMutationVariables>;
+export const RemoveTodoDocument = gql`
+    mutation removeTodo($id: String!) {
+  deleteTodo(id: $id)
+}
+    `;
+export type RemoveTodoMutationFn = Apollo.MutationFunction<RemoveTodoMutation, RemoveTodoMutationVariables>;
+
+/**
+ * __useRemoveTodoMutation__
+ *
+ * To run a mutation, you first call `useRemoveTodoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRemoveTodoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [removeTodoMutation, { data, loading, error }] = useRemoveTodoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRemoveTodoMutation(baseOptions?: Apollo.MutationHookOptions<RemoveTodoMutation, RemoveTodoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RemoveTodoMutation, RemoveTodoMutationVariables>(RemoveTodoDocument, options);
+      }
+export type RemoveTodoMutationHookResult = ReturnType<typeof useRemoveTodoMutation>;
+export type RemoveTodoMutationResult = Apollo.MutationResult<RemoveTodoMutation>;
+export type RemoveTodoMutationOptions = Apollo.BaseMutationOptions<RemoveTodoMutation, RemoveTodoMutationVariables>;
 export const GetTodoListDocument = gql`
     query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder) {
   todos(parentId: $parentId, pageData: {page: $page, take: $take, order: $order}) {
