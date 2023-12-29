@@ -8,19 +8,27 @@ import {
 } from "@/features/todos/components/NewTodoInput";
 import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/Pagination";
+import { GetTodoListQueryHookResult } from "@gql/gql-generated";
 
 export interface TodoListProps {
   readonly parentId?: string;
+  readonly refetchParent?: GetTodoListQueryHookResult["refetch"];
 }
 
+const refetchParentNoop: GetTodoListQueryHookResult["refetch"] = () =>
+  Promise.resolve({} as ReturnType<GetTodoListQueryHookResult["refetch"]>);
+
 export const TodoList: FC<TodoListProps> = (props) => {
-  const { parentId } = props;
+  const { parentId, refetchParent = refetchParentNoop } = props;
 
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
   });
 
-  const { addNewTodo } = useAddNewTodoMutation(refetchTodoList);
+  const { addNewTodo } = useAddNewTodoMutation([
+    refetchTodoList,
+    refetchParent,
+  ]);
   const handleAddNewTodo: NewTodoInputProps["onSubmit"] = useCallback(
     (title) => {
       addNewTodo({
@@ -30,7 +38,10 @@ export const TodoList: FC<TodoListProps> = (props) => {
     },
     [addNewTodo, parentId]
   );
-  const { removeTodo } = useRemoveTodoMutation(refetchTodoList);
+  const { removeTodo } = useRemoveTodoMutation([
+    refetchTodoList,
+    refetchParent,
+  ]);
   const handleNextPageChange = useCallback(() => {
     if (page?.hasNextPage) {
       refetchTodoList({ parentId: parentId, page: (page?.page || 1) + 1 });
@@ -55,9 +66,10 @@ export const TodoList: FC<TodoListProps> = (props) => {
             key={todo.id}
             id={todo.id}
             title={todo.title}
-            hasChildren={todo.todos.page.pageCount > 0}
+            hasChildren={todo.todos.page.itemCount > 0}
             isCompleted={todo.completed}
             onRemove={removeTodo}
+            refetchParent={refetchTodoList}
           />
         ))}
       </ul>

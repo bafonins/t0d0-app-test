@@ -1,5 +1,6 @@
 import {
   Args,
+  Info,
   Mutation,
   Parent,
   Query,
@@ -16,6 +17,8 @@ import { PaginationInput } from '../common/pagination/inputs/page.input';
 import { PaginationDto } from '../common/pagination/dto/page.dto';
 import { PubSubService } from '../common/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
+import { GraphQLResolveInfo } from 'graphql';
+import { FieldMaskDto } from 'src/common/fieldMask/dto/fieldMask.dto';
 
 @Resolver(() => Todo)
 export class TodoResolver {
@@ -37,6 +40,17 @@ export class TodoResolver {
     );
   }
 
+  @Query(() => Todo)
+  async todo(
+    @Args({ name: 'id', type: () => String }) id: string,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<Todo | undefined> {
+    return this.todosService.findOne(
+      id,
+      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos']),
+    );
+  }
+
   @ResolveField('todos', () => TodoList)
   async children(
     @Parent() todo: Todo,
@@ -50,8 +64,14 @@ export class TodoResolver {
   }
 
   @ResolveField('parent', () => Todo)
-  async parent(@Parent() childTodo: Todo): Promise<Todo | undefined> {
-    return this.todosService.findParent(childTodo.id);
+  async parent(
+    @Parent() childTodo: Todo,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<Todo | undefined> {
+    return this.todosService.findOneByChildId(
+      childTodo.id,
+      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos']),
+    );
   }
 
   @Mutation(() => Todo)

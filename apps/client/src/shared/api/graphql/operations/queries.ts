@@ -17,7 +17,7 @@ export const GET_TODO_LIST = gql`
         completed
         todos(pageData: { page: 1, take: 1, order: DESC }) {
           page {
-            pageCount
+            itemCount
           }
         }
       }

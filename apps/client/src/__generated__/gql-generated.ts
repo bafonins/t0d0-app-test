@@ -70,7 +70,13 @@ export type ParentTodoIdInput = {
 
 export type Query = {
   readonly __typename?: 'Query';
+  readonly todo: Todo;
   readonly todos: TodoList;
+};
+
+
+export type QueryTodoArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -159,7 +165,7 @@ export type GetTodoListQueryVariables = Exact<{
 }>;
 
 
-export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
+export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly itemCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
 
 export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -277,7 +283,7 @@ export const GetTodoListDocument = gql`
       completed
       todos(pageData: {page: 1, take: 1, order: DESC}) {
         page {
-          pageCount
+          itemCount
         }
       }
     }
@@ -381,8 +387,9 @@ export type PaginationInfoFieldPolicy = {
 	pageCount?: FieldPolicy<any> | FieldReadFunction<any>,
 	pageSize?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('todos' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('todo' | 'todos' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
+	todo?: FieldPolicy<any> | FieldReadFunction<any>,
 	todos?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type SubscriptionKeySpecifier = ('todoSubscriptionUpdate' | SubscriptionKeySpecifier)[];

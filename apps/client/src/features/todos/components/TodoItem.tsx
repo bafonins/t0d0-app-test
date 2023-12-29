@@ -5,6 +5,7 @@ import {
   MouseEventHandler,
   ChangeEventHandler,
 } from "react";
+import { GetTodoListQueryHookResult } from "@gql/gql-generated";
 import { TodoList } from "@/features/todos/components/TodoList";
 import { useToggleTodoCompletionMutation } from "@/features/todos/hooks/useToggleTodoCompletion";
 
@@ -14,10 +15,12 @@ export interface TodoItemProps {
   readonly hasChildren: boolean;
   readonly isCompleted: boolean;
   readonly onRemove: (id: string) => void;
+  readonly refetchParent: GetTodoListQueryHookResult["refetch"];
 }
 
 export const TodoItem: FC<TodoItemProps> = (props) => {
-  const { id, title, hasChildren, isCompleted, onRemove } = props;
+  const { id, title, hasChildren, isCompleted, onRemove, refetchParent } =
+    props;
 
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
@@ -61,7 +64,7 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
       <button style={{ marginLeft: "8px" }} onClick={handleRemoval}>
         delete
       </button>
-      {isExpanded && <TodoList parentId={id} />}
+      {isExpanded && <TodoList refetchParent={refetchParent} parentId={id} />}
     </li>
   );
 };
