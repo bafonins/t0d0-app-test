@@ -6,7 +6,7 @@ import {
 } from "@gql/gql-generated";
 
 export const useAddNewTodoMutation = (
-  refetchTodoList: GetTodoListQueryHookResult["refetch"]
+  refetchTodoList: GetTodoListQueryHookResult["refetch"][]
 ) => {
   const [mutateFunction, { data, loading, error }] =
     useGeneratedAddNewTodoMutation();
@@ -16,7 +16,8 @@ export const useAddNewTodoMutation = (
       const result = await mutateFunction({
         variables: { createTodoInput: variables },
       });
-      refetchTodoList();
+      await Promise.all(refetchTodoList.map((refetch) => refetch()));
+
       return result;
     },
     [mutateFunction, refetchTodoList]
