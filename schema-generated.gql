@@ -38,6 +38,7 @@ input ParentTodoIdInput {
 }
 
 type Query {
+  todo(id: String!): Todo!
   todos(pageData: PaginationInput!, parentId: String): TodoList!
 }
 

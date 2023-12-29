@@ -8,6 +8,7 @@ import { TodosRepository } from './todos.repository';
 import { PubSubService } from '../common/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { TodoSubscriptionType } from './models/todo-subscription-type.model';
+import { FieldMaskDto } from '../common/fieldMask/dto/fieldMask.dto';
 
 @Injectable()
 export class TodosService {
@@ -42,6 +43,29 @@ export class TodosService {
       },
     };
     return result;
+  }
+
+  async findOne(
+    todoId: string,
+    fieldMask: FieldMaskDto,
+  ): Promise<Todo | undefined> {
+    return this.todosRepository.findOneTodo({
+      todoId: todoId,
+      selectOptions: fieldMask.fields,
+    });
+  }
+
+  async findOneByChildId(
+    childId: string,
+    parentFieldMask: FieldMaskDto,
+  ): Promise<Todo | undefined> {
+    return this.todosRepository.findOneTodo({
+      todoId: childId,
+      selectOptions: [],
+      relations: {
+        parent: parentFieldMask.fields,
+      },
+    });
   }
 
   async findParent(todoId: string): Promise<Todo | undefined> {

@@ -3,11 +3,17 @@ import { Repository, IsNull, FindOptionsWhere, DataSource } from 'typeorm';
 import { Todo } from './models/todo.model';
 import { SortOrder } from '../common/pagination/const';
 
-export interface FindAndCountProps {
+export interface FindAndCountTodosProps {
   readonly parentId: string | undefined;
   readonly order: SortOrder;
   readonly skip: number;
   readonly take: number;
+}
+
+export interface FindOneTodoProps {
+  readonly todoId: string;
+  readonly selectOptions: string[];
+  readonly relations?: Record<string, string[]>;
 }
 
 export interface CreateTodoProps {
@@ -32,7 +38,9 @@ export class TodosRepository extends Repository<Todo> {
     super(Todo, dataSource.createEntityManager());
   }
 
-  async findAndCountTodos(props: FindAndCountProps): Promise<[Todo[], number]> {
+  async findAndCountTodos(
+    props: FindAndCountTodosProps,
+  ): Promise<[Todo[], number]> {
     const { parentId, order, skip, take } = props;
 
     const whereCondition: FindOptionsWhere<Todo> = {
@@ -47,6 +55,29 @@ export class TodosRepository extends Repository<Todo> {
       .take(take);
 
     return queryBuilder.getManyAndCount();
+  }
+
+  async findOneTodo(props: FindOneTodoProps): Promise<Todo> {
+    const { todoId, selectOptions, relations = {} } = props;
+
+    const whereCondition: FindOptionsWhere<Todo> = {
+      id: todoId,
+    };
+
+    const queryBuilder = this.createQueryBuilder('todo');
+    if (selectOptions.length > 0) {
+      queryBuilder.select(selectOptions);
+    }
+
+    Object.keys(relations).forEach((relationName) => {
+      if (relations[relationName].length > 0) {
+        queryBuilder
+          .leftJoinAndSelect(`todo.${relationName}`, relationName)
+          .addSelect(relations[relationName]);
+      }
+    });
+
+    return queryBuilder.where(whereCondition).getOne();
   }
 
   async createTodo(props: CreateTodoProps): Promise<Todo> {
