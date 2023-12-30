@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import {
   FC,
   useState,
@@ -6,8 +7,9 @@ import {
   ChangeEventHandler,
 } from "react";
 import { GetTodoListQueryHookResult } from "@gql/gql-generated";
-import { TodoList } from "@/features/todos/components/TodoList";
+import { TodoList } from "@/features/todos/components/todo-list/TodoList";
 import { useToggleTodoCompletionMutation } from "@/features/todos/hooks/useToggleTodoCompletion";
+import styles from "./TodoList.module.css";
 
 export interface TodoItemProps {
   readonly id: string;
@@ -22,7 +24,7 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
   const { id, title, hasChildren, isCompleted, onRemove, refetchParent } =
     props;
 
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isOpened, setIsOpened] = useState<boolean>(false);
   const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
   const handleTodoCompletionChange: ChangeEventHandler<HTMLInputElement> =
     useCallback(() => {
@@ -34,37 +36,30 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
   const handleRemoval = useCallback(() => {
     onRemove(id);
   }, [id, onRemove]);
-  const handleClick: MouseEventHandler<HTMLLIElement> = useCallback(() => {
-    setIsExpanded((isExpanded) => !isExpanded);
-  }, [setIsExpanded]);
-
-  let indicator = null;
-  if (hasChildren) {
-    indicator = isExpanded ? "👆" : "👇";
-  }
+  const handleClick: MouseEventHandler<HTMLButtonElement> = useCallback(() => {
+    setIsOpened((isOpened) => !isOpened);
+  }, [setIsOpened]);
 
   return (
-    <li style={{ cursor: "pointer" }}>
-      <input
-        type="checkbox"
-        checked={isCompleted}
-        onChange={handleTodoCompletionChange}
-      />
-      <span
-        onClick={handleClick}
-        style={isCompleted ? { textDecoration: "line-through" } : {}}
-      >
-        {title}
-      </span>
-      {indicator && (
-        <span style={{ marginLeft: "8px", cursor: "initial" }}>
-          {indicator}
-        </span>
-      )}
-      <button style={{ marginLeft: "8px" }} onClick={handleRemoval}>
-        delete
-      </button>
-      {isExpanded && <TodoList refetchParent={refetchParent} parentId={id} />}
+    <li
+      className={classNames(styles.item, {
+        [styles.completed]: isCompleted,
+        [styles.opened]: isOpened,
+        [styles.hasChildren]: hasChildren,
+      })}
+    >
+      <div className={styles.content}>
+        <button className={styles.expand} onClick={handleClick}></button>
+        <input
+          className={styles.toggle}
+          type="checkbox"
+          checked={isCompleted}
+          onChange={handleTodoCompletionChange}
+        />
+        <label className={styles.title}>{title}</label>
+        <button className={styles.remove} onClick={handleRemoval}></button>
+      </div>
+      {isOpened && <TodoList refetchParent={refetchParent} parentId={id} />}
     </li>
   );
 };

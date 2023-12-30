@@ -5,6 +5,7 @@ import {
   KeyboardEventHandler,
   useCallback,
 } from "react";
+import styles from "./NewTodoInput.module.css";
 
 export interface NewTodoInputProps {
   readonly onSubmit: (value: string) => void;
@@ -33,7 +34,7 @@ export const NewTodoInput: FC<NewTodoInputProps> = (props) => {
 
   return (
     <input
-      style={{ padding: "8px" }}
+      className={styles.newTodoInput}
       type="text"
       value={todoTitle}
       onChange={handleInputChange}

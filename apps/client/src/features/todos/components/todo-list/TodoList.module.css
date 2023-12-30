@@ -1,0 +1,82 @@
+.list {
+  width: 100%;
+  padding-left: 16px;
+  margin-left: 0;
+  margin-top: 8px;
+  font-size: 24px;
+  list-style: none;
+}
+
+.item {
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.item.opened > .content .expand {
+  transform: rotate(90deg);
+  trasnform-origin: top left;
+}
+
+.item.completed .title {
+  opacity: 0.5;
+}
+
+.item.completed > .content .title {
+  text-decoration: line-through;
+}
+
+.item.hasChildren > .content .expand:after {
+  content: "❯❯";
+}
+
+.item > .content .expand:after {
+  content: " ❯";
+}
+
+.expand {
+  display: block;
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  font-size: 24px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.remove {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  font-size: 24px;
+  transition: color 0.2s ease-out;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.remove:after {
+  content: "×";
+}
+
+.item:hover > .content > .remove {
+  display: block;
+}
+
+.toggle {
+  height: 24px;
+  width: 24px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-left: 40px;
+  padding-right: 40px;
+}
