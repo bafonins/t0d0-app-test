@@ -1,14 +1,18 @@
 import { FC, useCallback } from "react";
 import { useGetTodoListQuery } from "@/features/todos/hooks/useGetTodoListQuery";
 import { useAddNewTodoMutation } from "@/features/todos/hooks/useAddNewTodo";
-import { TodoItem } from "@/features/todos/components/TodoItem";
+import {
+  TodoItem,
+  TodoItemEmpty,
+} from "@/features/todos/components/todo-list/TodoItem";
 import {
   NewTodoInput,
   NewTodoInputProps,
-} from "@/features/todos/components/NewTodoInput";
+} from "@/features/todos/components/new-todo-input/NewTodoInput";
 import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/Pagination";
 import { GetTodoListQueryHookResult } from "@gql/gql-generated";
+import styles from "./TodoList.module.css";
 
 export interface TodoListProps {
   readonly parentId?: string;
@@ -24,6 +28,13 @@ export const TodoList: FC<TodoListProps> = (props) => {
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
   });
+  const {
+    itemCount = 0,
+    hasNextPage = false,
+    hasPreviousPage = false,
+  } = page || {};
+  const hasTodos = itemCount > 0;
+  const showPagination = hasTodos && (hasNextPage || hasPreviousPage);
 
   const { addNewTodo } = useAddNewTodoMutation([
     refetchTodoList,
@@ -58,28 +69,34 @@ export const TodoList: FC<TodoListProps> = (props) => {
   }
 
   return (
-    <div>
-      <NewTodoInput onSubmit={handleAddNewTodo} />
-      <ul>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            id={todo.id}
-            title={todo.title}
-            hasChildren={todo.todos.page.itemCount > 0}
-            isCompleted={todo.completed}
-            onRemove={removeTodo}
-            refetchParent={refetchTodoList}
-          />
-        ))}
+    <div className={styles.listContainer}>
+      <div className={styles.inputContainer}>
+        <NewTodoInput onSubmit={handleAddNewTodo} />
+      </div>
+      <ul className={styles.list}>
+        {hasTodos &&
+          todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              id={todo.id}
+              title={todo.title}
+              hasChildren={todo.todos.page.itemCount > 0}
+              isCompleted={todo.completed}
+              onRemove={removeTodo}
+              refetchParent={refetchTodoList}
+            />
+          ))}
+        {!hasTodos && <TodoItemEmpty />}
       </ul>
-      <Pagination
-        hasNextPage={page?.hasNextPage}
-        hasPreviousPage={page?.hasPreviousPage}
-        currentPage={page?.page}
-        onNextPage={handleNextPageChange}
-        onPreviousPage={handlePreviousPageChange}
-      />
+      {showPagination && (
+        <Pagination
+          hasNextPage={page?.hasNextPage}
+          hasPreviousPage={page?.hasPreviousPage}
+          currentPage={page?.page}
+          onNextPage={handleNextPageChange}
+          onPreviousPage={handlePreviousPageChange}
+        />
+      )}
     </div>
   );
 };

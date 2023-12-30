@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { DEFAULT_PAGE } from "@/constants/pagination";
+import styles from "./Pagination.module.css";
 
 export interface PaginationProps {
   onNextPage: () => void;
@@ -19,14 +20,18 @@ export const Pagination: FC<PaginationProps> = (props) => {
   } = props;
 
   return (
-    <div style={{ width: "100%", display: "flex", justifyContent: "center" }}>
-      <button disabled={!hasPreviousPage} onClick={onPreviousPage}>
-        {"<<"}
-      </button>
-      <span style={{ margin: "0 8px" }}>{currentPage}</span>
-      <button disabled={!hasNextPage} onClick={onNextPage}>
-        {">>"}
-      </button>
+    <div className={styles.pagination}>
+      <button
+        className={styles.prev}
+        disabled={!hasPreviousPage}
+        onClick={onPreviousPage}
+      ></button>
+      <span className={styles.page}>{currentPage}</span>
+      <button
+        className={styles.next}
+        disabled={!hasNextPage}
+        onClick={onNextPage}
+      ></button>
     </div>
   );
 };

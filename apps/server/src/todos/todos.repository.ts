@@ -50,7 +50,7 @@ export class TodosRepository extends Repository<Todo> {
     const queryBuilder = this.createQueryBuilder('todos');
     queryBuilder
       .where(whereCondition)
-      .orderBy('todos.updatedAt', order)
+      .orderBy('todos.createdAt', order)
       .skip(skip)
       .take(take);
 

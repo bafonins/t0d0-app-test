@@ -1,0 +1,112 @@
+:root {
+  --backgroundLightness: 14%;
+}
+
+.listContainer {
+  padding: 8px;
+}
+
+.list {
+  width: 100%;
+  padding: 0 8px;
+  margin: 8px 0 0 0;
+  font-size: 24px;
+  list-style: none;
+}
+
+.list .item {
+  background-color: hsl(0, 0%, var(--backgroundLightness));
+}
+
+.item:hover {
+  background-color: hsl(0, 0%, calc(var(--backgroundLightness) + 10%));
+}
+
+.item:hover .empty {
+  background-color: inherit;
+}
+
+.item.empty {
+  font-style: italic;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.item.opened {
+  border-left: 2px solid #999;
+}
+
+.item.opened > .content .expand {
+  transform: rotate(90deg);
+  trasnform-origin: top left;
+}
+
+.item.completed .title {
+  opacity: 0.5;
+}
+
+.item.completed > .content .title {
+  text-decoration: line-through;
+}
+
+.item.hasChildren > .content .expand:after {
+  content: "❯❯";
+}
+
+.item > .content .expand:after {
+  content: " ❯";
+}
+
+.item:hover > .content > .remove {
+  display: block;
+}
+
+.item > .listContainer {
+  font-size: 0.5em;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 4px 40px;
+}
+
+.expand {
+  display: block;
+  position: absolute;
+  left: 10px;
+  top: 0;
+  bottom: 0;
+  font-size: 24px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.remove {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  font-size: 24px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.remove:after {
+  content: "×";
+}
+
+.inputContainer {
+  padding: 0 8px 0 40px;
+}
+
+.toggle {
+  height: 24px;
+  width: 24px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
