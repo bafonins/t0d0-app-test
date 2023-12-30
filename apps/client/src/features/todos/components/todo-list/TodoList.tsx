@@ -1,7 +1,10 @@
 import { FC, useCallback } from "react";
 import { useGetTodoListQuery } from "@/features/todos/hooks/useGetTodoListQuery";
 import { useAddNewTodoMutation } from "@/features/todos/hooks/useAddNewTodo";
-import { TodoItem } from "@/features/todos/components/todo-list/TodoItem";
+import {
+  TodoItem,
+  TodoItemEmpty,
+} from "@/features/todos/components/todo-list/TodoItem";
 import {
   NewTodoInput,
   NewTodoInputProps,
@@ -30,7 +33,8 @@ export const TodoList: FC<TodoListProps> = (props) => {
     hasNextPage = false,
     hasPreviousPage = false,
   } = page || {};
-  const showPagination = itemCount > 0 && (hasNextPage || hasPreviousPage);
+  const hasTodos = itemCount > 0;
+  const showPagination = hasTodos && (hasNextPage || hasPreviousPage);
 
   const { addNewTodo } = useAddNewTodoMutation([
     refetchTodoList,
@@ -65,20 +69,24 @@ export const TodoList: FC<TodoListProps> = (props) => {
   }
 
   return (
-    <div>
-      <NewTodoInput onSubmit={handleAddNewTodo} />
+    <div className={styles.listContainer}>
+      <div className={styles.inputContainer}>
+        <NewTodoInput onSubmit={handleAddNewTodo} />
+      </div>
       <ul className={styles.list}>
-        {todos.map((todo) => (
-          <TodoItem
-            key={todo.id}
-            id={todo.id}
-            title={todo.title}
-            hasChildren={todo.todos.page.itemCount > 0}
-            isCompleted={todo.completed}
-            onRemove={removeTodo}
-            refetchParent={refetchTodoList}
-          />
-        ))}
+        {hasTodos &&
+          todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              id={todo.id}
+              title={todo.title}
+              hasChildren={todo.todos.page.itemCount > 0}
+              isCompleted={todo.completed}
+              onRemove={removeTodo}
+              refetchParent={refetchTodoList}
+            />
+          ))}
+        {!hasTodos && <TodoItemEmpty />}
       </ul>
       {showPagination && (
         <Pagination

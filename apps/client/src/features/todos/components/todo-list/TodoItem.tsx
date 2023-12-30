@@ -63,3 +63,11 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
     </li>
   );
 };
+
+export const TodoItemEmpty: FC = () => {
+  return (
+    <li className={classNames(styles.item, styles.empty)}>
+      <span>empty</span>
+    </li>
+  );
+};

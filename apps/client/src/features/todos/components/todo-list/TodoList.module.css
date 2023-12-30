@@ -1,15 +1,39 @@
+:root {
+  --backgroundLightness: 14%;
+}
+
+.listContainer {
+  padding: 8px;
+}
+
 .list {
   width: 100%;
-  padding-left: 16px;
-  margin-left: 0;
-  margin-top: 8px;
+  padding: 0 8px;
+  margin: 8px 0 0 0;
   font-size: 24px;
   list-style: none;
 }
 
-.item {
-  padding: 8px;
-  border-radius: 8px;
+.list .item {
+  background-color: hsl(0, 0%, var(--backgroundLightness));
+}
+
+.item:hover {
+  background-color: hsl(0, 0%, calc(var(--backgroundLightness) + 10%));
+}
+
+.item:hover .empty {
+  background-color: inherit;
+}
+
+.item.empty {
+  font-style: italic;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.item.opened {
+  border-left: 2px solid #999;
 }
 
 .item.opened > .content .expand {
@@ -33,6 +57,21 @@
   content: " ❯";
 }
 
+.item:hover > .content > .remove {
+  display: block;
+}
+
+.item > .listContainer {
+  font-size: 0.5em;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 4px 40px;
+}
+
 .expand {
   display: block;
   position: absolute;
@@ -52,7 +91,6 @@
   top: 0;
   bottom: 0;
   font-size: 24px;
-  transition: color 0.2s ease-out;
   background: none;
   border: 0;
   cursor: pointer;
@@ -62,8 +100,8 @@
   content: "×";
 }
 
-.item:hover > .content > .remove {
-  display: block;
+.inputContainer {
+  padding: 0 8px 0 40px;
 }
 
 .toggle {
@@ -71,12 +109,4 @@
   width: 24px;
   margin-right: 10px;
   margin-left: 10px;
-}
-
-.content {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding-left: 40px;
-  padding-right: 40px;
 }
