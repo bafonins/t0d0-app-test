@@ -1,4 +1,5 @@
 import { FC, useCallback } from "react";
+import classNames from "classnames";
 import { useGetTodoListQuery } from "@/features/todos/hooks/useGetTodoListQuery";
 import { useAddNewTodoMutation } from "@/features/todos/hooks/useAddNewTodo";
 import {
@@ -15,6 +16,7 @@ import { GetTodoListQueryHookResult } from "@gql/gql-generated";
 import styles from "./TodoList.module.css";
 
 export interface TodoListProps {
+  readonly className?: string;
   readonly parentId?: string;
   readonly refetchParent?: GetTodoListQueryHookResult["refetch"];
 }
@@ -23,7 +25,7 @@ const refetchParentNoop: GetTodoListQueryHookResult["refetch"] = () =>
   Promise.resolve({} as ReturnType<GetTodoListQueryHookResult["refetch"]>);
 
 export const TodoList: FC<TodoListProps> = (props) => {
-  const { parentId, refetchParent = refetchParentNoop } = props;
+  const { parentId, className, refetchParent = refetchParentNoop } = props;
 
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
@@ -69,7 +71,7 @@ export const TodoList: FC<TodoListProps> = (props) => {
   }
 
   return (
-    <div className={styles.listContainer}>
+    <div className={classNames(styles.listContainer, className)}>
       <div className={styles.inputContainer}>
         <NewTodoInput onSubmit={handleAddNewTodo} />
       </div>
