@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
+import { User } from '../../users/models/user.model';
 import {
   Entity,
   Column,
@@ -39,4 +40,8 @@ export class Todo {
   @OneToMany(() => Todo, (todo) => todo.parent)
   @Field(() => [Todo!], { nullable: true })
   todos: Todo[];
+
+  @Field(() => User)
+  @ManyToOne(() => User, (user) => user.todos)
+  owner: User;
 }

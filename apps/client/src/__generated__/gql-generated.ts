@@ -20,6 +20,12 @@ export type Scalars = {
   DateTime: { input: Date; output: Date; }
 };
 
+export type AuthUser = {
+  readonly __typename?: 'AuthUser';
+  readonly token: Scalars['String']['output'];
+  readonly user: User;
+};
+
 export type CreateTodoInput = {
   readonly parent?: InputMaybe<ParentTodoIdInput>;
   readonly title: Scalars['String']['input'];
@@ -29,6 +35,7 @@ export type Mutation = {
   readonly __typename?: 'Mutation';
   readonly addTodo: Todo;
   readonly deleteTodo: Scalars['Boolean']['output'];
+  readonly signIn: AuthUser;
   readonly updateTodo: Todo;
 };
 
@@ -40,6 +47,11 @@ export type MutationAddTodoArgs = {
 
 export type MutationDeleteTodoArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type MutationSignInArgs = {
+  signInData: SignInInput;
 };
 
 
@@ -86,6 +98,10 @@ export type QueryTodosArgs = {
   parentId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type SignInInput = {
+  readonly username: Scalars['String']['input'];
+};
+
 export enum SortOrder {
   Asc = 'ASC',
   Desc = 'DESC'
@@ -101,6 +117,7 @@ export type Todo = {
   readonly completed: Scalars['Boolean']['output'];
   readonly createdAt: Scalars['DateTime']['output'];
   readonly id: Scalars['ID']['output'];
+  readonly owner: User;
   readonly parent?: Maybe<Todo>;
   readonly title: Scalars['String']['output'];
   readonly todos: TodoList;
@@ -140,6 +157,15 @@ export type UpdateTodoInput = {
   readonly completed?: InputMaybe<Scalars['Boolean']['input']>;
   readonly parent?: InputMaybe<ParentTodoIdInput>;
   readonly title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type User = {
+  readonly __typename?: 'User';
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['ID']['output'];
+  readonly todos?: Maybe<ReadonlyArray<Todo>>;
+  readonly updatedAt: Scalars['DateTime']['output'];
+  readonly username: Scalars['String']['output'];
 };
 
 export type AddNewTodoMutationVariables = Exact<{
@@ -385,10 +411,16 @@ export function useOnTodoUpdatedSubscription(baseOptions?: Apollo.SubscriptionHo
       }
 export type OnTodoUpdatedSubscriptionHookResult = ReturnType<typeof useOnTodoUpdatedSubscription>;
 export type OnTodoUpdatedSubscriptionResult = Apollo.SubscriptionResult<OnTodoUpdatedSubscription>;
-export type MutationKeySpecifier = ('addTodo' | 'deleteTodo' | 'updateTodo' | MutationKeySpecifier)[];
+export type AuthUserKeySpecifier = ('token' | 'user' | AuthUserKeySpecifier)[];
+export type AuthUserFieldPolicy = {
+	token?: FieldPolicy<any> | FieldReadFunction<any>,
+	user?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type MutationKeySpecifier = ('addTodo' | 'deleteTodo' | 'signIn' | 'updateTodo' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	addTodo?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteTodo?: FieldPolicy<any> | FieldReadFunction<any>,
+	signIn?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateTodo?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type PaginationInfoKeySpecifier = ('hasNextPage' | 'hasPreviousPage' | 'itemCount' | 'page' | 'pageCount' | 'pageSize' | PaginationInfoKeySpecifier)[];
@@ -409,11 +441,12 @@ export type SubscriptionKeySpecifier = ('todoSubscriptionUpdate' | SubscriptionK
 export type SubscriptionFieldPolicy = {
 	todoSubscriptionUpdate?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type TodoKeySpecifier = ('completed' | 'createdAt' | 'id' | 'parent' | 'title' | 'todos' | 'updatedAt' | TodoKeySpecifier)[];
+export type TodoKeySpecifier = ('completed' | 'createdAt' | 'id' | 'owner' | 'parent' | 'title' | 'todos' | 'updatedAt' | TodoKeySpecifier)[];
 export type TodoFieldPolicy = {
 	completed?: FieldPolicy<any> | FieldReadFunction<any>,
 	createdAt?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	owner?: FieldPolicy<any> | FieldReadFunction<any>,
 	parent?: FieldPolicy<any> | FieldReadFunction<any>,
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	todos?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -429,7 +462,19 @@ export type TodoSubscriptionMessageFieldPolicy = {
 	data?: FieldPolicy<any> | FieldReadFunction<any>,
 	type?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type UserKeySpecifier = ('createdAt' | 'id' | 'todos' | 'updatedAt' | 'username' | UserKeySpecifier)[];
+export type UserFieldPolicy = {
+	createdAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	todos?: FieldPolicy<any> | FieldReadFunction<any>,
+	updatedAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	username?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type StrictTypedTypePolicies = {
+	AuthUser?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | AuthUserKeySpecifier | (() => undefined | AuthUserKeySpecifier),
+		fields?: AuthUserFieldPolicy,
+	},
 	Mutation?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
 		fields?: MutationFieldPolicy,
@@ -457,6 +502,10 @@ export type StrictTypedTypePolicies = {
 	TodoSubscriptionMessage?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | TodoSubscriptionMessageKeySpecifier | (() => undefined | TodoSubscriptionMessageKeySpecifier),
 		fields?: TodoSubscriptionMessageFieldPolicy,
+	},
+	User?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserKeySpecifier | (() => undefined | UserKeySpecifier),
+		fields?: UserFieldPolicy,
 	}
 };
 export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;

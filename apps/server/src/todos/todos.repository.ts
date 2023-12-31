@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, IsNull, FindOptionsWhere, DataSource } from 'typeorm';
 import { Todo } from './models/todo.model';
-import { SortOrder } from '../common/pagination/const';
+import { SortOrder } from '../common/modules/pagination/const';
 import { TodoFilterType } from './models/todo-filter-type.model';
 
 export interface FindAndCountTodosProps {

@@ -20,7 +20,7 @@ scalar DateTime
 type Mutation {
   addTodo(createTodoData: CreateTodoInput!): Todo!
   deleteTodo(id: String!): Boolean!
-  singIn(username: String!): AuthUser!
+  signIn(signInData: SignInInput!): AuthUser!
   updateTodo(id: String!, updateTodoData: UpdateTodoInput!): Todo!
 }
 
@@ -48,6 +48,10 @@ type Query {
   todos(filter: TodoFilterType = ALL, pageData: PaginationInput!, parentId: String): TodoList!
 }
 
+input SignInInput {
+  username: String!
+}
+
 enum SortOrder {
   ASC
   DESC
@@ -61,6 +65,7 @@ type Todo {
   completed: Boolean!
   createdAt: DateTime!
   id: ID!
+  owner: User!
   parent: Todo
   title: String!
   todos(pageData: PaginationInput!): TodoList!
@@ -98,6 +103,7 @@ input UpdateTodoInput {
 type User {
   createdAt: DateTime!
   id: ID!
+  todos: [Todo!]
   updatedAt: DateTime!
   username: String!
 }

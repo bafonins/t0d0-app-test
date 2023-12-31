@@ -7,7 +7,7 @@ import { TodosModule } from './todos/todos.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from './todos/models/todo.model';
-import { PubSubModule } from './common/pubsub/pubsub.module';
+import { PubSubModule } from './common/modules/pubsub/pubsub.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/models/user.model';
 import { AuthModule } from './auth/auth.module';

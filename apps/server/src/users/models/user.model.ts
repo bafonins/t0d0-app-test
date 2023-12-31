@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Todo } from '../../todos/models/todo.model';
 
 @Entity('users')
 @ObjectType()
@@ -25,4 +27,8 @@ export class User {
   @UpdateDateColumn()
   @Field(() => GraphQLISODateTime)
   updatedAt: Date;
+
+  @Field(() => [Todo], { defaultValue: [], nullable: true })
+  @OneToMany(() => Todo, (todo) => todo.owner, { nullable: true })
+  todos: Todo[];
 }

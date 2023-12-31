@@ -3,12 +3,12 @@ import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { CreateTodoInput } from './inputs/create-todo.input';
 import { TodoList } from './models/todo-list.model';
-import { PaginationDto } from '../common/pagination/dto/page.dto';
+import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
 import { TodosRepository } from './todos.repository';
-import { PubSubService } from '../common/pubsub/pubsub.service';
+import { PubSubService } from '../common/modules/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { TodoSubscriptionType } from './models/todo-subscription-type.model';
-import { FieldMaskDto } from '../common/fieldMask/dto/fieldMask.dto';
+import { FieldMaskDto } from '../common/modules/fieldMask/dto/fieldMask.dto';
 import { TodoFilterType } from './models/todo-filter-type.model';
 
 @Injectable()
