@@ -8,6 +8,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from './todos/models/todo.model';
 import { PubSubModule } from './common/pubsub/pubsub.module';
+import { UsersModule } from './users/users.module';
+import { User } from './users/models/user.model';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { PubSubModule } from './common/pubsub/pubsub.module';
         username: configService.get<string>('POSTGRES_USER', 'admin'),
         password: configService.get<string>('POSTGRES_PASSWORD', '12345'),
         database: configService.get<string>('POSTGRES_DB', 'app-db'),
-        entities: [Todo],
+        entities: [Todo, User],
         synchronize: configService.get<string>('NODE_ENV') === 'development',
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
@@ -64,6 +66,7 @@ import { PubSubModule } from './common/pubsub/pubsub.module';
     }),
     TodosModule,
     PubSubModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
