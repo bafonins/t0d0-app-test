@@ -10,6 +10,8 @@ import { Todo } from './todos/models/todo.model';
 import { PubSubModule } from './common/pubsub/pubsub.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/models/user.model';
+import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -64,9 +66,18 @@ import { User } from './users/models/user.model';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client', 'dist'),
     }),
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+      }),
+      inject: [ConfigService],
+    }),
     TodosModule,
     PubSubModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthUser {
+  token: String!
+  user: User!
+}
+
 input CreateTodoInput {
   parent: ParentTodoIdInput
   title: String!
@@ -15,6 +20,7 @@ scalar DateTime
 type Mutation {
   addTodo(createTodoData: CreateTodoInput!): Todo!
   deleteTodo(id: String!): Boolean!
+  singIn(username: String!): AuthUser!
   updateTodo(id: String!, updateTodoData: UpdateTodoInput!): Todo!
 }
 
@@ -87,4 +93,11 @@ input UpdateTodoInput {
   completed: Boolean
   parent: ParentTodoIdInput
   title: String
+}
+
+type User {
+  createdAt: DateTime!
+  id: ID!
+  updatedAt: DateTime!
+  username: String!
 }
