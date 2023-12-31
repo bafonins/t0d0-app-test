@@ -1,4 +1,4 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import classNames from "classnames";
 import { useGetTodoListQuery } from "@/features/todos/hooks/useGetTodoListQuery";
 import { useAddNewTodoMutation } from "@/features/todos/hooks/useAddNewTodo";
@@ -12,12 +12,13 @@ import {
 } from "@/features/todos/components/new-todo-input/NewTodoInput";
 import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/Pagination";
-import { GetTodoListQueryHookResult } from "@gql/gql-generated";
+import { GetTodoListQueryHookResult, TodoFilterType } from "@gql/gql-generated";
 import styles from "./TodoList.module.css";
 
 export interface TodoListProps {
   readonly className?: string;
   readonly parentId?: string;
+  readonly filter?: TodoFilterType;
   readonly refetchParent?: GetTodoListQueryHookResult["refetch"];
 }
 
@@ -25,10 +26,17 @@ const refetchParentNoop: GetTodoListQueryHookResult["refetch"] = () =>
   Promise.resolve({} as ReturnType<GetTodoListQueryHookResult["refetch"]>);
 
 export const TodoList: FC<TodoListProps> = (props) => {
-  const { parentId, className, refetchParent = refetchParentNoop } = props;
+  const {
+    parentId,
+    className,
+    filter,
+    refetchParent = refetchParentNoop,
+  } = props;
+  console.log("filter in list:", filter);
 
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
+    filter: filter,
   });
   const {
     itemCount = 0,
@@ -65,6 +73,11 @@ export const TodoList: FC<TodoListProps> = (props) => {
       refetchTodoList({ parentId: parentId, page: (page?.page || 1) - 1 });
     }
   }, [refetchTodoList, page, parentId]);
+
+  useEffect(() => {
+    console.log("kekistan");
+    refetchTodoList({ parentId: parentId, filter: filter });
+  }, [parentId, filter, refetchTodoList]);
 
   if (loading) {
     return null;

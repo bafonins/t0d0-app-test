@@ -1,6 +1,7 @@
 .app {
   position: relative;
   margin-top: 200px;
+  min-width: 320px;
 }
 
 .heading {

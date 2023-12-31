@@ -81,6 +81,7 @@ export type QueryTodoArgs = {
 
 
 export type QueryTodosArgs = {
+  filter?: InputMaybe<TodoFilterType>;
   pageData: PaginationInput;
   parentId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -110,6 +111,12 @@ export type Todo = {
 export type TodoTodosArgs = {
   pageData: PaginationInput;
 };
+
+export enum TodoFilterType {
+  Active = 'ACTIVE',
+  All = 'ALL',
+  Completed = 'COMPLETED'
+}
 
 export type TodoList = {
   readonly __typename?: 'TodoList';
@@ -162,6 +169,7 @@ export type GetTodoListQueryVariables = Exact<{
   page: Scalars['Int']['input'];
   take: Scalars['Int']['input'];
   order?: InputMaybe<SortOrder>;
+  filter?: InputMaybe<TodoFilterType>;
 }>;
 
 
@@ -275,8 +283,12 @@ export type RemoveTodoMutationHookResult = ReturnType<typeof useRemoveTodoMutati
 export type RemoveTodoMutationResult = Apollo.MutationResult<RemoveTodoMutation>;
 export type RemoveTodoMutationOptions = Apollo.BaseMutationOptions<RemoveTodoMutation, RemoveTodoMutationVariables>;
 export const GetTodoListDocument = gql`
-    query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder) {
-  todos(parentId: $parentId, pageData: {page: $page, take: $take, order: $order}) {
+    query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder, $filter: TodoFilterType) {
+  todos(
+    parentId: $parentId
+    pageData: {page: $page, take: $take, order: $order}
+    filter: $filter
+  ) {
     list {
       id
       title
@@ -315,6 +327,7 @@ export const GetTodoListDocument = gql`
  *      page: // value for 'page'
  *      take: // value for 'take'
  *      order: // value for 'order'
+ *      filter: // value for 'filter'
  *   },
  * });
  */
