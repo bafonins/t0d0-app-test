@@ -81,7 +81,7 @@ describe('TodosService', () => {
       jest
         .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([testTodos, testTodos.length]));
-      await service.findAll(undefined, pageData);
+      await service.findAll(undefined, pageData, undefined);
       expect(repository.findAndCountTodos).toHaveBeenCalledTimes(1);
     });
 
@@ -90,7 +90,7 @@ describe('TodosService', () => {
       jest
         .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([[], 0]));
-      await service.findAll(testId, pageData);
+      await service.findAll(testId, pageData, undefined);
 
       expect(repository.findAndCountTodos).toHaveBeenCalledWith(
         expect.objectContaining({ parentId: testId }),
@@ -101,7 +101,7 @@ describe('TodosService', () => {
       jest
         .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([[], 0]));
-      await service.findAll(undefined, pageData);
+      await service.findAll(undefined, pageData, undefined);
 
       expect(repository.findAndCountTodos).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -114,7 +114,7 @@ describe('TodosService', () => {
       jest
         .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([[], 0]));
-      await service.findAll(undefined, pageData);
+      await service.findAll(undefined, pageData, undefined);
 
       expect(repository.findAndCountTodos).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -129,7 +129,7 @@ describe('TodosService', () => {
       jest
         .spyOn(repository, 'findAndCountTodos')
         .mockReturnValueOnce(Promise.resolve([testTodos, 2]));
-      const result = await service.findAll(undefined, pageData);
+      const result = await service.findAll(undefined, pageData, undefined);
       expect(result.list).toHaveLength(2);
       expect(result).toEqual(
         expect.objectContaining({

@@ -9,6 +9,7 @@ import { PubSubService } from '../common/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { TodoSubscriptionType } from './models/todo-subscription-type.model';
 import { FieldMaskDto } from '../common/fieldMask/dto/fieldMask.dto';
+import { TodoFilterType } from './models/todo-filter-type.model';
 
 @Injectable()
 export class TodosService {
@@ -22,12 +23,14 @@ export class TodosService {
   async findAll(
     parentId: string | undefined,
     pageData: PaginationDto,
+    filter: TodoFilterType,
   ): Promise<TodoList> {
     const [entities, itemCount] = await this.todosRepository.findAndCountTodos({
       parentId: parentId,
       order: pageData.order,
       skip: pageData.skip,
       take: pageData.take,
+      filter: filter,
     });
 
     const pageCount = Math.ceil(itemCount / pageData.take);

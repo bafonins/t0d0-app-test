@@ -39,7 +39,7 @@ input ParentTodoIdInput {
 
 type Query {
   todo(id: String!): Todo!
-  todos(pageData: PaginationInput!, parentId: String): TodoList!
+  todos(filter: TodoFilterType = ALL, pageData: PaginationInput!, parentId: String): TodoList!
 }
 
 enum SortOrder {
@@ -59,6 +59,12 @@ type Todo {
   title: String!
   todos(pageData: PaginationInput!): TodoList!
   updatedAt: DateTime!
+}
+
+enum TodoFilterType {
+  ACTIVE
+  ALL
+  COMPLETED
 }
 
 type TodoList {

@@ -19,6 +19,7 @@ import { PubSubService } from '../common/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { GraphQLResolveInfo } from 'graphql';
 import { FieldMaskDto } from 'src/common/fieldMask/dto/fieldMask.dto';
+import { TodoFilterType } from './models/todo-filter-type.model';
 
 @Resolver(() => Todo)
 export class TodoResolver {
@@ -33,10 +34,17 @@ export class TodoResolver {
     parentId: string | undefined,
     @Args('pageData')
     pageData: PaginationInput,
+    @Args('filter', {
+      nullable: true,
+      defaultValue: TodoFilterType.ALL,
+      type: () => TodoFilterType,
+    })
+    filter: TodoFilterType,
   ): Promise<TodoList> {
     return this.todosService.findAll(
       parentId,
       PaginationDto.fromInput(pageData),
+      filter,
     );
   }
 
@@ -60,6 +68,7 @@ export class TodoResolver {
     return this.todosService.findAll(
       todo.id,
       PaginationDto.fromInput(pageData),
+      TodoFilterType.ALL,
     );
   }
 

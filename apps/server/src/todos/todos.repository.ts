@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Repository, IsNull, FindOptionsWhere, DataSource } from 'typeorm';
 import { Todo } from './models/todo.model';
 import { SortOrder } from '../common/pagination/const';
+import { TodoFilterType } from './models/todo-filter-type.model';
 
 export interface FindAndCountTodosProps {
   readonly parentId: string | undefined;
   readonly order: SortOrder;
   readonly skip: number;
   readonly take: number;
+  readonly filter: TodoFilterType;
 }
 
 export interface FindOneTodoProps {
@@ -41,13 +43,19 @@ export class TodosRepository extends Repository<Todo> {
   async findAndCountTodos(
     props: FindAndCountTodosProps,
   ): Promise<[Todo[], number]> {
-    const { parentId, order, skip, take } = props;
+    const { parentId, order, skip, take, filter } = props;
 
     const whereCondition: FindOptionsWhere<Todo> = {
       parent: { id: parentId || IsNull() },
     };
 
     const queryBuilder = this.createQueryBuilder('todos');
+    if (filter === TodoFilterType.COMPLETED) {
+      whereCondition.completed = true;
+    } else if (filter === TodoFilterType.ACTIVE) {
+      whereCondition.completed = false;
+    }
+
     queryBuilder
       .where(whereCondition)
       .orderBy('todos.createdAt', order)
