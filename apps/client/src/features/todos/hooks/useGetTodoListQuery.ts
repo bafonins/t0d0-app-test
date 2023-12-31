@@ -2,6 +2,7 @@ import {
   useGetTodoListQuery as useGeneratedGetTodoListQuery,
   GetTodoListQueryVariables,
   SortOrder,
+  TodoFilterType,
 } from "@gql/gql-generated";
 import { DEFAULT_TODO_PAGE_SIZE, DEFAULT_PAGE } from "@/constants/pagination";
 
@@ -10,6 +11,7 @@ const defaultVariables: GetTodoListQueryVariables = {
   take: DEFAULT_TODO_PAGE_SIZE,
   page: DEFAULT_PAGE,
   order: SortOrder.Desc,
+  filter: TodoFilterType.All,
 };
 
 export const useGetTodoListQuery = (

@@ -6,10 +6,12 @@ export const GET_TODO_LIST = gql`
     $page: Int!
     $take: Int!
     $order: SortOrder
+    $filter: TodoFilterType
   ) {
     todos(
       parentId: $parentId
       pageData: { page: $page, take: $take, order: $order }
+      filter: $filter
     ) {
       list {
         id
