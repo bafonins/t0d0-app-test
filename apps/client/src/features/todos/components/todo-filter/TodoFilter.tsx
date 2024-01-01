@@ -32,6 +32,7 @@ export const TodoFilter: FC<TodoFilterProps> = (props) => {
         value={TodoFilterType.All}
         checked={value === TodoFilterType.All}
         onChange={handleFilterChange}
+        title="show all tasks"
       ></input>
       <label htmlFor="active-filter">Active</label>
       <input
@@ -43,6 +44,7 @@ export const TodoFilter: FC<TodoFilterProps> = (props) => {
         value={TodoFilterType.Active}
         checked={value === TodoFilterType.Active}
         onChange={handleFilterChange}
+        title="show active tasks"
       ></input>
       <label htmlFor="completed-filter">Completed</label>
       <input
@@ -54,6 +56,7 @@ export const TodoFilter: FC<TodoFilterProps> = (props) => {
         value={TodoFilterType.Completed}
         checked={value === TodoFilterType.Completed}
         onChange={handleFilterChange}
+        title="show completed tasks"
       ></input>
     </div>
   );
