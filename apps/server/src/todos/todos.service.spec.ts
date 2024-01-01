@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { TodosService } from './todos.service';
 import { Todo } from './models/todo.model';
 import { TodosRepository } from './todos.repository';
@@ -20,12 +20,12 @@ describe('TodosService', () => {
         TodosRepository,
         PubSubService,
         {
-          provide: DataSource,
-          useValue: { createEntityManager: jest.fn() },
-        },
-        {
           provide: 'PUB_SUB',
           useValue: new PubSub(),
+        },
+        {
+          provide: EntityManager,
+          useValue: { query: jest.fn() },
         },
       ],
     }).compile();
