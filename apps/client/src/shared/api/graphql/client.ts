@@ -4,12 +4,16 @@ import {
   GqlInMemoryCache,
   GqlHttpLink,
   GqlWsLink,
+  GqlLink,
 } from "@/shared/api/graphql/types";
 import { StrictTypedTypePolicies } from "@gql/gql-generated";
 import { split, getMainDefinition } from "@/shared/api/graphql/utils";
-
+import { getToken } from "@/shared/storage";
 const typePolicies: StrictTypedTypePolicies = {
   Todo: {
+    keyFields: ["id"],
+  },
+  User: {
     keyFields: ["id"],
   },
 };
@@ -25,6 +29,17 @@ export const createGqlClient = (httpUri: string, wsUri: string) => {
     })
   );
 
+  const authMiddleware = new GqlLink((operation, forward) => {
+    const authToken = getToken();
+    operation.setContext({
+      headers: {
+        authorization: authToken ? `Bearer ${authToken}` : null,
+      },
+    });
+
+    return forward(operation);
+  });
+
   const splitLink = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
@@ -34,7 +49,7 @@ export const createGqlClient = (httpUri: string, wsUri: string) => {
       );
     },
     wsLink,
-    httpLink
+    authMiddleware.concat(httpLink)
   );
 
   return new GqlClient({

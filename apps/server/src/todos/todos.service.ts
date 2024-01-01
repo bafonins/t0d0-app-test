@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { CreateTodoInput } from './inputs/create-todo.input';
 import { TodoList } from './models/todo-list.model';
-import { PaginationDto } from '../common/pagination/dto/page.dto';
+import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
 import { TodosRepository } from './todos.repository';
-import { PubSubService } from '../common/pubsub/pubsub.service';
+import { PubSubService } from '../common/modules/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { TodoSubscriptionType } from './models/todo-subscription-type.model';
-import { FieldMaskDto } from '../common/fieldMask/dto/fieldMask.dto';
+import { FieldMaskDto } from '../common/modules/fieldMask/dto/fieldMask.dto';
 import { TodoFilterType } from './models/todo-filter-type.model';
 
 @Injectable()
@@ -58,6 +58,21 @@ export class TodosService {
     });
   }
 
+  async findOneByOwnerId(
+    todoId: string,
+    ownerId: string,
+  ): Promise<Todo | undefined> {
+    const todo = await this.todosRepository.findOneTodo({
+      todoId: todoId,
+      selectOptions: [],
+      relations: {
+        owner: ['owner.id'],
+      },
+    });
+
+    return todo.owner.id === ownerId ? todo : undefined;
+  }
+
   async findOneByChildId(
     childId: string,
     parentFieldMask: FieldMaskDto,
@@ -80,9 +95,10 @@ export class TodosService {
     return todo ? todo.parent : undefined;
   }
 
-  async create(data: CreateTodoInput): Promise<Todo> {
+  async create(ownerId: string, data: CreateTodoInput): Promise<Todo> {
     const created = await this.todosRepository.createTodo({
       title: data.title,
+      ownerId: ownerId,
       parentId: data.parent?.id,
     });
     await this.pubSubService.publish<TodoSubscriptionMessage>(
@@ -97,6 +113,21 @@ export class TodosService {
   }
 
   async update(id: string, data: UpdateTodoInput): Promise<Todo | undefined> {
+    const rootParent = await this.todosRepository.findTodoRootParent(id);
+
+    if (id === rootParent.id) {
+      if (rootParent.frozen && data.frozen === undefined) {
+        throw new BadRequestException('Cannot update frozen task');
+      }
+    } else {
+      if (data.frozen) {
+        throw new BadRequestException('Only top-level task can be frozen');
+      }
+      if (rootParent.frozen) {
+        throw new BadRequestException('Cannot update task with frozen parent');
+      }
+    }
+
     const updated = await this.todosRepository.updateTodo({
       id: id,
       ...data,

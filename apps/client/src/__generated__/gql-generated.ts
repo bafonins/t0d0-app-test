@@ -20,6 +20,12 @@ export type Scalars = {
   DateTime: { input: Date; output: Date; }
 };
 
+export type AuthUser = {
+  readonly __typename?: 'AuthUser';
+  readonly token: Scalars['String']['output'];
+  readonly user: User;
+};
+
 export type CreateTodoInput = {
   readonly parent?: InputMaybe<ParentTodoIdInput>;
   readonly title: Scalars['String']['input'];
@@ -29,6 +35,7 @@ export type Mutation = {
   readonly __typename?: 'Mutation';
   readonly addTodo: Todo;
   readonly deleteTodo: Scalars['Boolean']['output'];
+  readonly signIn: AuthUser;
   readonly updateTodo: Todo;
 };
 
@@ -40,6 +47,11 @@ export type MutationAddTodoArgs = {
 
 export type MutationDeleteTodoArgs = {
   id: Scalars['String']['input'];
+};
+
+
+export type MutationSignInArgs = {
+  signInData: SignInInput;
 };
 
 
@@ -86,6 +98,10 @@ export type QueryTodosArgs = {
   parentId?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type SignInInput = {
+  readonly username: Scalars['String']['input'];
+};
+
 export enum SortOrder {
   Asc = 'ASC',
   Desc = 'DESC'
@@ -100,7 +116,9 @@ export type Todo = {
   readonly __typename?: 'Todo';
   readonly completed: Scalars['Boolean']['output'];
   readonly createdAt: Scalars['DateTime']['output'];
+  readonly frozen: Scalars['Boolean']['output'];
   readonly id: Scalars['ID']['output'];
+  readonly owner: User;
   readonly parent?: Maybe<Todo>;
   readonly title: Scalars['String']['output'];
   readonly todos: TodoList;
@@ -138,8 +156,18 @@ export enum TodoSubscriptionType {
 
 export type UpdateTodoInput = {
   readonly completed?: InputMaybe<Scalars['Boolean']['input']>;
+  readonly frozen?: InputMaybe<Scalars['Boolean']['input']>;
   readonly parent?: InputMaybe<ParentTodoIdInput>;
   readonly title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type User = {
+  readonly __typename?: 'User';
+  readonly createdAt: Scalars['DateTime']['output'];
+  readonly id: Scalars['ID']['output'];
+  readonly todos?: Maybe<ReadonlyArray<Todo>>;
+  readonly updatedAt: Scalars['DateTime']['output'];
+  readonly username: Scalars['String']['output'];
 };
 
 export type AddNewTodoMutationVariables = Exact<{
@@ -164,6 +192,21 @@ export type RemoveTodoMutationVariables = Exact<{
 
 export type RemoveTodoMutation = { readonly __typename?: 'Mutation', readonly deleteTodo: boolean };
 
+export type SignInMutationVariables = Exact<{
+  username: Scalars['String']['input'];
+}>;
+
+
+export type SignInMutation = { readonly __typename?: 'Mutation', readonly signIn: { readonly __typename?: 'AuthUser', readonly token: string, readonly user: { readonly __typename?: 'User', readonly id: string, readonly username: string } } };
+
+export type FreezeTodoMutationVariables = Exact<{
+  id: Scalars['String']['input'];
+  frozen: Scalars['Boolean']['input'];
+}>;
+
+
+export type FreezeTodoMutation = { readonly __typename?: 'Mutation', readonly updateTodo: { readonly __typename?: 'Todo', readonly id: string, readonly frozen: boolean } };
+
 export type GetTodoListQueryVariables = Exact<{
   parentId?: InputMaybe<Scalars['String']['input']>;
   page: Scalars['Int']['input'];
@@ -173,7 +216,7 @@ export type GetTodoListQueryVariables = Exact<{
 }>;
 
 
-export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly itemCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
+export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly frozen: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly itemCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
 
 export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -282,6 +325,78 @@ export function useRemoveTodoMutation(baseOptions?: Apollo.MutationHookOptions<R
 export type RemoveTodoMutationHookResult = ReturnType<typeof useRemoveTodoMutation>;
 export type RemoveTodoMutationResult = Apollo.MutationResult<RemoveTodoMutation>;
 export type RemoveTodoMutationOptions = Apollo.BaseMutationOptions<RemoveTodoMutation, RemoveTodoMutationVariables>;
+export const SignInDocument = gql`
+    mutation signIn($username: String!) {
+  signIn(signInData: {username: $username}) {
+    token
+    user {
+      id
+      username
+    }
+  }
+}
+    `;
+export type SignInMutationFn = Apollo.MutationFunction<SignInMutation, SignInMutationVariables>;
+
+/**
+ * __useSignInMutation__
+ *
+ * To run a mutation, you first call `useSignInMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignInMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signInMutation, { data, loading, error }] = useSignInMutation({
+ *   variables: {
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useSignInMutation(baseOptions?: Apollo.MutationHookOptions<SignInMutation, SignInMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SignInMutation, SignInMutationVariables>(SignInDocument, options);
+      }
+export type SignInMutationHookResult = ReturnType<typeof useSignInMutation>;
+export type SignInMutationResult = Apollo.MutationResult<SignInMutation>;
+export type SignInMutationOptions = Apollo.BaseMutationOptions<SignInMutation, SignInMutationVariables>;
+export const FreezeTodoDocument = gql`
+    mutation freezeTodo($id: String!, $frozen: Boolean!) {
+  updateTodo(id: $id, updateTodoData: {frozen: $frozen}) {
+    id
+    frozen
+  }
+}
+    `;
+export type FreezeTodoMutationFn = Apollo.MutationFunction<FreezeTodoMutation, FreezeTodoMutationVariables>;
+
+/**
+ * __useFreezeTodoMutation__
+ *
+ * To run a mutation, you first call `useFreezeTodoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFreezeTodoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [freezeTodoMutation, { data, loading, error }] = useFreezeTodoMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      frozen: // value for 'frozen'
+ *   },
+ * });
+ */
+export function useFreezeTodoMutation(baseOptions?: Apollo.MutationHookOptions<FreezeTodoMutation, FreezeTodoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<FreezeTodoMutation, FreezeTodoMutationVariables>(FreezeTodoDocument, options);
+      }
+export type FreezeTodoMutationHookResult = ReturnType<typeof useFreezeTodoMutation>;
+export type FreezeTodoMutationResult = Apollo.MutationResult<FreezeTodoMutation>;
+export type FreezeTodoMutationOptions = Apollo.BaseMutationOptions<FreezeTodoMutation, FreezeTodoMutationVariables>;
 export const GetTodoListDocument = gql`
     query getTodoList($parentId: String, $page: Int!, $take: Int!, $order: SortOrder, $filter: TodoFilterType) {
   todos(
@@ -293,6 +408,7 @@ export const GetTodoListDocument = gql`
       id
       title
       completed
+      frozen
       todos(pageData: {page: 1, take: 1, order: DESC}) {
         page {
           itemCount
@@ -385,10 +501,16 @@ export function useOnTodoUpdatedSubscription(baseOptions?: Apollo.SubscriptionHo
       }
 export type OnTodoUpdatedSubscriptionHookResult = ReturnType<typeof useOnTodoUpdatedSubscription>;
 export type OnTodoUpdatedSubscriptionResult = Apollo.SubscriptionResult<OnTodoUpdatedSubscription>;
-export type MutationKeySpecifier = ('addTodo' | 'deleteTodo' | 'updateTodo' | MutationKeySpecifier)[];
+export type AuthUserKeySpecifier = ('token' | 'user' | AuthUserKeySpecifier)[];
+export type AuthUserFieldPolicy = {
+	token?: FieldPolicy<any> | FieldReadFunction<any>,
+	user?: FieldPolicy<any> | FieldReadFunction<any>
+};
+export type MutationKeySpecifier = ('addTodo' | 'deleteTodo' | 'signIn' | 'updateTodo' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	addTodo?: FieldPolicy<any> | FieldReadFunction<any>,
 	deleteTodo?: FieldPolicy<any> | FieldReadFunction<any>,
+	signIn?: FieldPolicy<any> | FieldReadFunction<any>,
 	updateTodo?: FieldPolicy<any> | FieldReadFunction<any>
 };
 export type PaginationInfoKeySpecifier = ('hasNextPage' | 'hasPreviousPage' | 'itemCount' | 'page' | 'pageCount' | 'pageSize' | PaginationInfoKeySpecifier)[];
@@ -409,11 +531,13 @@ export type SubscriptionKeySpecifier = ('todoSubscriptionUpdate' | SubscriptionK
 export type SubscriptionFieldPolicy = {
 	todoSubscriptionUpdate?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type TodoKeySpecifier = ('completed' | 'createdAt' | 'id' | 'parent' | 'title' | 'todos' | 'updatedAt' | TodoKeySpecifier)[];
+export type TodoKeySpecifier = ('completed' | 'createdAt' | 'frozen' | 'id' | 'owner' | 'parent' | 'title' | 'todos' | 'updatedAt' | TodoKeySpecifier)[];
 export type TodoFieldPolicy = {
 	completed?: FieldPolicy<any> | FieldReadFunction<any>,
 	createdAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	frozen?: FieldPolicy<any> | FieldReadFunction<any>,
 	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	owner?: FieldPolicy<any> | FieldReadFunction<any>,
 	parent?: FieldPolicy<any> | FieldReadFunction<any>,
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	todos?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -429,7 +553,19 @@ export type TodoSubscriptionMessageFieldPolicy = {
 	data?: FieldPolicy<any> | FieldReadFunction<any>,
 	type?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type UserKeySpecifier = ('createdAt' | 'id' | 'todos' | 'updatedAt' | 'username' | UserKeySpecifier)[];
+export type UserFieldPolicy = {
+	createdAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	id?: FieldPolicy<any> | FieldReadFunction<any>,
+	todos?: FieldPolicy<any> | FieldReadFunction<any>,
+	updatedAt?: FieldPolicy<any> | FieldReadFunction<any>,
+	username?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type StrictTypedTypePolicies = {
+	AuthUser?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | AuthUserKeySpecifier | (() => undefined | AuthUserKeySpecifier),
+		fields?: AuthUserFieldPolicy,
+	},
 	Mutation?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | MutationKeySpecifier | (() => undefined | MutationKeySpecifier),
 		fields?: MutationFieldPolicy,
@@ -457,6 +593,10 @@ export type StrictTypedTypePolicies = {
 	TodoSubscriptionMessage?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | TodoSubscriptionMessageKeySpecifier | (() => undefined | TodoSubscriptionMessageKeySpecifier),
 		fields?: TodoSubscriptionMessageFieldPolicy,
+	},
+	User?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | UserKeySpecifier | (() => undefined | UserKeySpecifier),
+		fields?: UserFieldPolicy,
 	}
 };
 export type TypedTypePolicies = StrictTypedTypePolicies & TypePolicies;

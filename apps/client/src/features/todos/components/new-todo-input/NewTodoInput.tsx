@@ -9,10 +9,11 @@ import styles from "./NewTodoInput.module.css";
 
 export interface NewTodoInputProps {
   readonly onSubmit: (value: string) => void;
+  readonly isDisabled: boolean;
 }
 
 export const NewTodoInput: FC<NewTodoInputProps> = (props) => {
-  const { onSubmit } = props;
+  const { onSubmit, isDisabled } = props;
 
   const [todoTitle, setTodoTitle] = useState("");
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -40,6 +41,7 @@ export const NewTodoInput: FC<NewTodoInputProps> = (props) => {
       onChange={handleInputChange}
       onKeyDown={handleInputSubmit}
       placeholder="What needs to be done?"
+      disabled={isDisabled}
     />
   );
 };

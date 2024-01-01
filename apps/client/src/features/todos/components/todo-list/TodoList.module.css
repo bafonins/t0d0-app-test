@@ -17,6 +17,7 @@
 
 .list .item {
   background-color: hsl(0, 0%, var(--backgroundLightness));
+  border-left: 2px solid transparent;
 }
 
 .item:hover,
@@ -33,6 +34,10 @@
   font-style: italic;
   text-align: center;
   opacity: 0.7;
+}
+
+.item.frozen {
+  opacity: 0.5;
 }
 
 .item.opened {
@@ -52,7 +57,7 @@
   text-decoration: line-through;
 }
 
-.item.hasChildren > .content .expand:after {
+.item.nested > .content .expand:after {
   content: "❯❯";
 }
 
@@ -60,8 +65,13 @@
   content: " ❯";
 }
 
-.item:hover > .content > .remove,
-.item:focus-within > .content > .remove {
+.item.editable:hover > .content > .remove,
+.item.editable:focus-within > .content > .remove {
+  display: block;
+}
+
+.item.freezable.editable:hover > .content > .freeze,
+.item.freezable.editable:focus-within > .content > .freeze {
   display: block;
 }
 
@@ -73,7 +83,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  padding: 4px 40px;
+  padding: 4px 60px 4px 40px;
 }
 
 .title {
@@ -98,10 +108,30 @@
   right: 10px;
   top: 0;
   bottom: 0;
-  font-size: 24px;
+  font-size: 30px;
   background: none;
   border: 0;
   cursor: pointer;
+}
+
+.freeze {
+  display: none;
+  position: absolute;
+  right: 35px;
+  top: 0;
+  bottom: 0;
+  font-size: 22px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.frozen .freeze:after {
+  content: "▶";
+}
+
+.freeze:after {
+  content: "‖";
 }
 
 .remove:after {

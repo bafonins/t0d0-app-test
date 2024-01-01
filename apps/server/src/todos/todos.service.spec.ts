@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 import { TodosService } from './todos.service';
 import { Todo } from './models/todo.model';
-import { DataSource } from 'typeorm';
-import { PaginationDto } from '../common/pagination/dto/page.dto';
-import { PaginationInfo } from '../common/pagination/models/page-info.model';
-import { SortOrder } from '../common/pagination/const';
 import { TodosRepository } from './todos.repository';
-import { PubSubService } from '../common/pubsub/pubsub.service';
-import { PubSub } from '../common/pubsub/pubsub';
+import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
+import { PaginationInfo } from '../common/modules/pagination/models/page-info.model';
+import { SortOrder } from '../common/modules/pagination/const';
+import { PubSubService } from '../common/modules/pubsub/pubsub.service';
+import { PubSub } from '../common/modules/pubsub/pubsub';
 
 describe('TodosService', () => {
   let service: TodosService;
@@ -47,19 +47,35 @@ describe('TodosService', () => {
       id: 'test-id',
       title: 'Test Todo title',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,
       todos: [],
+      owner: {
+        username: 'test-user',
+        id: 'test-user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        todos: [],
+      },
     };
     const sndTodo: Todo = {
       id: 'test-id-2',
       title: 'Test Todo title 2',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,
       todos: [],
+      owner: {
+        username: 'test-user',
+        id: 'test-user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        todos: [],
+      },
     };
     const pageData: PaginationDto = {
       page: 1,
@@ -145,10 +161,18 @@ describe('TodosService', () => {
       id: 'test-id',
       title: 'Test Todo title',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,
       todos: [],
+      owner: {
+        username: 'test-user',
+        id: 'test-user',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        todos: [],
+      },
     };
 
     it('should call todoRepository delete', async () => {

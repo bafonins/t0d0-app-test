@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthUser {
+  token: String!
+  user: User!
+}
+
 input CreateTodoInput {
   parent: ParentTodoIdInput
   title: String!
@@ -15,6 +20,7 @@ scalar DateTime
 type Mutation {
   addTodo(createTodoData: CreateTodoInput!): Todo!
   deleteTodo(id: String!): Boolean!
+  signIn(signInData: SignInInput!): AuthUser!
   updateTodo(id: String!, updateTodoData: UpdateTodoInput!): Todo!
 }
 
@@ -42,6 +48,10 @@ type Query {
   todos(filter: TodoFilterType = ALL, pageData: PaginationInput!, parentId: String): TodoList!
 }
 
+input SignInInput {
+  username: String!
+}
+
 enum SortOrder {
   ASC
   DESC
@@ -54,7 +64,9 @@ type Subscription {
 type Todo {
   completed: Boolean!
   createdAt: DateTime!
+  frozen: Boolean!
   id: ID!
+  owner: User!
   parent: Todo
   title: String!
   todos(pageData: PaginationInput!): TodoList!
@@ -85,6 +97,15 @@ enum TodoSubscriptionType {
 
 input UpdateTodoInput {
   completed: Boolean
+  frozen: Boolean
   parent: ParentTodoIdInput
   title: String
+}
+
+type User {
+  createdAt: DateTime!
+  id: ID!
+  todos: [Todo!]
+  updatedAt: DateTime!
+  username: String!
 }

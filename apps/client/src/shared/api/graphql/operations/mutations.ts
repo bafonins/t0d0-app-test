@@ -24,3 +24,24 @@ export const DELETE_DOTO = gql`
     deleteTodo(id: $id)
   }
 `;
+
+export const SIGN_IN = gql`
+  mutation signIn($username: String!) {
+    signIn(signInData: { username: $username }) {
+      token
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
+
+export const FREEZE_TODO = gql`
+  mutation freezeTodo($id: String!, $frozen: Boolean!) {
+    updateTodo(id: $id, updateTodoData: { frozen: $frozen }) {
+      id
+      frozen
+    }
+  }
+`;

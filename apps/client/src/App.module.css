@@ -4,6 +4,22 @@
   min-width: 320px;
 }
 
+.login {
+  position: absolute;
+  margin: 0;
+  top: -180px;
+  right: 0;
+}
+
+.login input {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.login button {
+  padding: 8px;
+}
+
 .heading {
   position: absolute;
   margin: 0;

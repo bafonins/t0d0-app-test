@@ -11,4 +11,7 @@ export class UpdateTodoInput {
 
   @Field(() => Boolean, { nullable: true })
   completed: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  frozen: boolean;
 }
