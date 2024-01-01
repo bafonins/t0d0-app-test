@@ -14,10 +14,12 @@ import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/pagination/Pagination";
 import { GetTodoListQueryHookResult, TodoFilterType } from "@gql/gql-generated";
 import styles from "./TodoList.module.css";
+import { useAuthContext } from "@/features/auth/hooks/useAuthContext";
 
 export interface TodoListProps {
   readonly className?: string;
   readonly parentId?: string;
+  readonly isParentFrozen?: boolean;
   readonly filter?: TodoFilterType;
   readonly refetchParent?: GetTodoListQueryHookResult["refetch"];
 }
@@ -27,12 +29,14 @@ const refetchParentNoop: GetTodoListQueryHookResult["refetch"] = () =>
 
 export const TodoList: FC<TodoListProps> = (props) => {
   const {
-    parentId,
     className,
+    parentId,
+    isParentFrozen = false,
     filter,
     refetchParent = refetchParentNoop,
   } = props;
 
+  const { user } = useAuthContext();
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
     filter: filter,
@@ -84,7 +88,10 @@ export const TodoList: FC<TodoListProps> = (props) => {
   return (
     <div className={classNames(styles.listContainer, className)}>
       <div className={styles.inputContainer}>
-        <NewTodoInput onSubmit={handleAddNewTodo} />
+        <NewTodoInput
+          onSubmit={handleAddNewTodo}
+          isDisabled={isParentFrozen || !user}
+        />
       </div>
       <ul className={styles.list}>
         {hasTodos &&
@@ -94,7 +101,9 @@ export const TodoList: FC<TodoListProps> = (props) => {
               id={todo.id}
               title={todo.title}
               hasChildren={todo.todos.page.itemCount > 0}
+              hasParent={parentId !== undefined}
               isCompleted={todo.completed}
+              isFrozen={todo.frozen}
               onRemove={removeTodo}
               refetchParent={refetchTodoList}
             />

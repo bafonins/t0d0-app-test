@@ -36,3 +36,12 @@ export const SIGN_IN = gql`
     }
   }
 `;
+
+export const FREEZE_TODO = gql`
+  mutation freezeTodo($id: String!, $frozen: Boolean!) {
+    updateTodo(id: $id, updateTodoData: { frozen: $frozen }) {
+      id
+      frozen
+    }
+  }
+`;
