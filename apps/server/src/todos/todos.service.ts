@@ -96,6 +96,17 @@ export class TodosService {
   }
 
   async create(ownerId: string, data: CreateTodoInput): Promise<Todo> {
+    if (data.parent?.id) {
+      const rootParent = await this.todosRepository.findTodoRootParent(
+        data.parent.id,
+      );
+      if (rootParent.frozen) {
+        throw new BadRequestException(
+          'Cannot add a new task under frozen parent',
+        );
+      }
+    }
+
     const created = await this.todosRepository.createTodo({
       title: data.title,
       ownerId: ownerId,
