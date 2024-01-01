@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { createGqlClient } from "@/shared/api/graphql/client";
 import { GqlProviderComponent } from "@/shared/api/graphql/types";
-import { AuthProvider } from "@/features/auth/providers/auth-provider.tsx";
+import { AuthProvider } from "@/features/auth/providers/AuthProvider.tsx";
 import "./index.css";
 
 const client = createGqlClient(
