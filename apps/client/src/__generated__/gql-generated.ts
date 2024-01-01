@@ -170,6 +170,8 @@ export type User = {
   readonly username: Scalars['String']['output'];
 };
 
+export type NewTodoFragment = { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly frozen: boolean, readonly updatedAt: Date, readonly parent?: { readonly __typename?: 'Todo', readonly id: string } | null };
+
 export type AddNewTodoMutationVariables = Exact<{
   createTodoInput: CreateTodoInput;
 }>;
@@ -221,9 +223,20 @@ export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: 
 export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type OnTodoUpdatedSubscription = { readonly __typename?: 'Subscription', readonly todoSubscriptionUpdate: { readonly __typename?: 'TodoSubscriptionMessage', readonly type: TodoSubscriptionType, readonly data?: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly updatedAt: Date, readonly parent?: { readonly __typename?: 'Todo', readonly id: string } | null } | null } };
+export type OnTodoUpdatedSubscription = { readonly __typename?: 'Subscription', readonly todoSubscriptionUpdate: { readonly __typename?: 'TodoSubscriptionMessage', readonly type: TodoSubscriptionType, readonly data?: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly frozen: boolean, readonly updatedAt: Date, readonly parent?: { readonly __typename?: 'Todo', readonly id: string } | null } | null } };
 
-
+export const NewTodoFragmentDoc = gql`
+    fragment NewTodo on Todo {
+  id
+  title
+  completed
+  frozen
+  updatedAt
+  parent {
+    id
+  }
+}
+    `;
 export const AddNewTodoDocument = gql`
     mutation addNewTodo($createTodoInput: CreateTodoInput!) {
   addTodo(createTodoData: $createTodoInput) {
@@ -470,6 +483,7 @@ export const OnTodoUpdatedDocument = gql`
       id
       title
       completed
+      frozen
       updatedAt
       parent {
         id
