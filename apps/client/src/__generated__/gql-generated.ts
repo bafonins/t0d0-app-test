@@ -82,6 +82,7 @@ export type ParentTodoIdInput = {
 
 export type Query = {
   readonly __typename?: 'Query';
+  readonly me: User;
   readonly todo: Todo;
   readonly todos: TodoList;
 };
@@ -219,6 +220,11 @@ export type GetTodoListQueryVariables = Exact<{
 
 
 export type GetTodoListQuery = { readonly __typename?: 'Query', readonly todos: { readonly __typename?: 'TodoList', readonly list?: ReadonlyArray<{ readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly frozen: boolean, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly itemCount: number } } }> | null, readonly page: { readonly __typename?: 'PaginationInfo', readonly pageCount: number, readonly itemCount: number, readonly page: number, readonly pageSize: number, readonly hasNextPage: boolean, readonly hasPreviousPage: boolean } } };
+
+export type MeQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type MeQuery = { readonly __typename?: 'Query', readonly me: { readonly __typename?: 'User', readonly id: string, readonly username: string } };
 
 export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -476,6 +482,46 @@ export type GetTodoListQueryHookResult = ReturnType<typeof useGetTodoListQuery>;
 export type GetTodoListLazyQueryHookResult = ReturnType<typeof useGetTodoListLazyQuery>;
 export type GetTodoListSuspenseQueryHookResult = ReturnType<typeof useGetTodoListSuspenseQuery>;
 export type GetTodoListQueryResult = Apollo.QueryResult<GetTodoListQuery, GetTodoListQueryVariables>;
+export const MeDocument = gql`
+    query me {
+  me {
+    id
+    username
+  }
+}
+    `;
+
+/**
+ * __useMeQuery__
+ *
+ * To run a query within a React component, call `useMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useMeQuery(baseOptions?: Apollo.QueryHookOptions<MeQuery, MeQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+      }
+export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
+export function useMeSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<MeQuery, MeQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<MeQuery, MeQueryVariables>(MeDocument, options);
+        }
+export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
+export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
+export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
+export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const OnTodoUpdatedDocument = gql`
     subscription onTodoUpdated {
   todoSubscriptionUpdate {
@@ -536,8 +582,9 @@ export type PaginationInfoFieldPolicy = {
 	pageCount?: FieldPolicy<any> | FieldReadFunction<any>,
 	pageSize?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type QueryKeySpecifier = ('todo' | 'todos' | QueryKeySpecifier)[];
+export type QueryKeySpecifier = ('me' | 'todo' | 'todos' | QueryKeySpecifier)[];
 export type QueryFieldPolicy = {
+	me?: FieldPolicy<any> | FieldReadFunction<any>,
 	todo?: FieldPolicy<any> | FieldReadFunction<any>,
 	todos?: FieldPolicy<any> | FieldReadFunction<any>
 };

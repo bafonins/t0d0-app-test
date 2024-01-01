@@ -1,7 +1,7 @@
 import { ReactNode, FC, useCallback } from "react";
+import { useApolloClient } from "@apollo/client";
 import { useLoginMutation } from "../hooks/useLogin";
 import { AuthContext, Context } from "../contexts/auth-context";
-import { useApolloClient } from "@apollo/client";
 import { saveToken, clearToken } from "@/shared/storage";
 
 interface AuthProviderProps {
@@ -10,7 +10,15 @@ interface AuthProviderProps {
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const client = useApolloClient();
-  const { login: loginMutation, data, loading, error } = useLoginMutation();
+
+  const {
+    login: loginMutation,
+    user,
+    token,
+    loading,
+    error,
+  } = useLoginMutation();
+
   const login = useCallback(
     async (username: string) => {
       const result = await loginMutation(username);
@@ -28,8 +36,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, [client]);
 
   const context: Context = {
-    user: data?.user,
-    token: data?.token,
+    user: user,
+    token: token,
     loading: loading,
     error: error,
     login: login,
