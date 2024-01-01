@@ -2,7 +2,7 @@
 # to generate types based on app schema.
 schema: "../../schema-generated.gql"
 overwrite: true
-documents: "src/shared/api/graphql/operations/**/*.ts"
+documents: "src/shared/api/graphql/documents/**/*.ts"
 generates:
   ./src/__generated__/gql-generated.ts:
     plugins:

@@ -7,6 +7,7 @@ export const TODOS_SUBSCRIPTION = gql`
         id
         title
         completed
+        frozen
         updatedAt
         parent {
           id
