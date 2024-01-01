@@ -3,6 +3,7 @@ import { Repository, IsNull, FindOptionsWhere, DataSource } from 'typeorm';
 import { Todo } from './models/todo.model';
 import { TodoFilterType } from './models/todo-filter-type.model';
 import { SortOrder } from 'src/common/modules/pagination/const';
+import { GET_ROOT_PARENT_TODO_QUERY } from './dal/raw-queries';
 
 export interface FindAndCountTodosProps {
   readonly parentId: string | undefined;
@@ -32,6 +33,7 @@ export interface UpdateTodoProps {
   id: string;
   title?: string;
   completed?: boolean;
+  frozen?: boolean;
   parent?: { id: string };
 }
 
@@ -87,6 +89,11 @@ export class TodosRepository extends Repository<Todo> {
     });
 
     return queryBuilder.where(whereCondition).getOne();
+  }
+
+  async findTodoRootParent(id: string): Promise<Todo | undefined> {
+    const result = await this.manager.query(GET_ROOT_PARENT_TODO_QUERY, [id]);
+    return result ? result[0] : undefined;
   }
 
   async createTodo(props: CreateTodoProps): Promise<Todo> {

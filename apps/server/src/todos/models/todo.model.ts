@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('todos')
@@ -25,6 +26,10 @@ export class Todo {
   @Field()
   completed: boolean;
 
+  @Column({ default: false })
+  @Field()
+  frozen: boolean;
+
   @CreateDateColumn()
   @Field(() => GraphQLISODateTime)
   createdAt: Date;
@@ -34,6 +39,7 @@ export class Todo {
   updatedAt: Date;
 
   @ManyToOne(() => Todo, (todo) => todo.todos, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'parentId' })
   @Field(() => Todo, { nullable: true })
   parent?: Todo;
 

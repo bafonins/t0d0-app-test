@@ -3,11 +3,11 @@ import { DataSource } from 'typeorm';
 import { TodosService } from './todos.service';
 import { Todo } from './models/todo.model';
 import { TodosRepository } from './todos.repository';
-import { PaginationDto } from 'src/common/modules/pagination/dto/page.dto';
-import { PaginationInfo } from 'src/common/modules/pagination/models/page-info.model';
-import { SortOrder } from 'src/common/modules/pagination/const';
-import { PubSubService } from 'src/common/modules/pubsub/pubsub.service';
-import { PubSub } from 'src/common/modules/pubsub/pubsub';
+import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
+import { PaginationInfo } from '../common/modules/pagination/models/page-info.model';
+import { SortOrder } from '../common/modules/pagination/const';
+import { PubSubService } from '../common/modules/pubsub/pubsub.service';
+import { PubSub } from '../common/modules/pubsub/pubsub';
 
 describe('TodosService', () => {
   let service: TodosService;
@@ -47,6 +47,7 @@ describe('TodosService', () => {
       id: 'test-id',
       title: 'Test Todo title',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,
@@ -63,6 +64,7 @@ describe('TodosService', () => {
       id: 'test-id-2',
       title: 'Test Todo title 2',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,
@@ -159,6 +161,7 @@ describe('TodosService', () => {
       id: 'test-id',
       title: 'Test Todo title',
       completed: false,
+      frozen: false,
       updatedAt: new Date(),
       createdAt: new Date(),
       parent: undefined,

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Todo } from './models/todo.model';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { CreateTodoInput } from './inputs/create-todo.input';
@@ -58,6 +58,21 @@ export class TodosService {
     });
   }
 
+  async findOneByOwnerId(
+    todoId: string,
+    ownerId: string,
+  ): Promise<Todo | undefined> {
+    const todo = await this.todosRepository.findOneTodo({
+      todoId: todoId,
+      selectOptions: [],
+      relations: {
+        owner: ['owner.id'],
+      },
+    });
+
+    return todo.owner.id === ownerId ? todo : undefined;
+  }
+
   async findOneByChildId(
     childId: string,
     parentFieldMask: FieldMaskDto,
@@ -98,6 +113,21 @@ export class TodosService {
   }
 
   async update(id: string, data: UpdateTodoInput): Promise<Todo | undefined> {
+    const rootParent = await this.todosRepository.findTodoRootParent(id);
+
+    if (id === rootParent.id) {
+      if (rootParent.frozen && data.frozen === undefined) {
+        throw new BadRequestException('Cannot update frozen task');
+      }
+    } else {
+      if (data.frozen) {
+        throw new BadRequestException('Only top-level task can be frozen');
+      }
+      if (rootParent.frozen) {
+        throw new BadRequestException('Cannot update task with frozen parent');
+      }
+    }
+
     const updated = await this.todosRepository.updateTodo({
       id: id,
       ...data,

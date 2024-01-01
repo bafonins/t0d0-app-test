@@ -17,6 +17,7 @@ import { UpdateTodoInput } from './inputs/update-todo.input';
 import { TodoList } from './models/todo-list.model';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
 import { TodoFilterType } from './models/todo-filter-type.model';
+import { TodoOwnerGuard } from './guards/todo-owner.guard';
 import { PaginationInput } from 'src/common/modules/pagination/inputs/page.input';
 import { PaginationDto } from 'src/common/modules/pagination/dto/page.dto';
 import { PubSubService } from 'src/common/modules/pubsub/pubsub.service';
@@ -59,7 +60,7 @@ export class TodoResolver {
   ): Promise<Todo | undefined> {
     return this.todosService.findOne(
       id,
-      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos']),
+      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos', 'owner']),
     );
   }
 
@@ -83,7 +84,7 @@ export class TodoResolver {
   ): Promise<Todo | undefined> {
     return this.todosService.findOneByChildId(
       childTodo.id,
-      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos']),
+      FieldMaskDto.fromGqlInfo(info, ['parent', 'todos', 'owner']),
     );
   }
 
@@ -102,7 +103,7 @@ export class TodoResolver {
     return this.todosService.delete(id);
   }
 
-  @UseGuards(GraphqlJwtAuthGuard)
+  @UseGuards(GraphqlJwtAuthGuard, TodoOwnerGuard)
   @Mutation(() => Todo)
   async updateTodo(
     @Args('id') id: string,
