@@ -126,7 +126,7 @@ export class TodosService {
   async update(id: string, data: UpdateTodoInput): Promise<Todo | undefined> {
     const rootParent = await this.todosRepository.findTodoRootParent(id);
 
-    if (id === rootParent.id) {
+    if (id === rootParent?.id) {
       if (rootParent.frozen && data.frozen === undefined) {
         throw new BadRequestException('Cannot update frozen task');
       }
@@ -159,6 +159,10 @@ export class TodosService {
   }
 
   async delete(id: string): Promise<boolean> {
+    const rootParent = await this.todosRepository.findTodoRootParent(id);
+    if (rootParent?.frozen) {
+      throw new BadRequestException('Cannot delete todo under frozen task');
+    }
     const deletedTodo = await this.todosRepository.deleteTodo({ id: id });
     if (deletedTodo) {
       await this.pubSubService.publish<TodoSubscriptionMessage>(
