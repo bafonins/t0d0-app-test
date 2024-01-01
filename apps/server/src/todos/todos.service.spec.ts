@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
 import { TodosService } from './todos.service';
 import { Todo } from './models/todo.model';
-import { DataSource } from 'typeorm';
-import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
-import { PaginationInfo } from '../common/modules/pagination/models/page-info.model';
-import { SortOrder } from '../common/modules/pagination/const';
 import { TodosRepository } from './todos.repository';
-import { PubSubService } from '../common/modules/pubsub/pubsub.service';
-import { PubSub } from '../common/modules/pubsub/pubsub';
+import { PaginationDto } from 'src/common/modules/pagination/dto/page.dto';
+import { PaginationInfo } from 'src/common/modules/pagination/models/page-info.model';
+import { SortOrder } from 'src/common/modules/pagination/const';
+import { PubSubService } from 'src/common/modules/pubsub/pubsub.service';
+import { PubSub } from 'src/common/modules/pubsub/pubsub';
 
 describe('TodosService', () => {
   let service: TodosService;

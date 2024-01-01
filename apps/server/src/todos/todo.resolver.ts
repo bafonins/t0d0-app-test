@@ -8,20 +8,22 @@ import {
   Resolver,
   Subscription,
 } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { GraphQLResolveInfo } from 'graphql';
 import { Todo } from './models/todo.model';
 import { TodosService } from './todos.service';
 import { CreateTodoInput } from './inputs/create-todo.input';
 import { UpdateTodoInput } from './inputs/update-todo.input';
 import { TodoList } from './models/todo-list.model';
-import { PaginationInput } from '../common/modules/pagination/inputs/page.input';
-import { PaginationDto } from '../common/modules/pagination/dto/page.dto';
-import { PubSubService } from '../common/modules/pubsub/pubsub.service';
 import { TodoSubscriptionMessage } from './models/todo-subscription.model';
-import { GraphQLResolveInfo } from 'graphql';
-import { FieldMaskDto } from 'src/common/modules/fieldMask/dto/fieldMask.dto';
 import { TodoFilterType } from './models/todo-filter-type.model';
-import { UseGuards } from '@nestjs/common';
+import { PaginationInput } from 'src/common/modules/pagination/inputs/page.input';
+import { PaginationDto } from 'src/common/modules/pagination/dto/page.dto';
+import { PubSubService } from 'src/common/modules/pubsub/pubsub.service';
+import { FieldMaskDto } from 'src/common/modules/fieldMask/dto/fieldMask.dto';
 import { GraphqlJwtAuthGuard } from 'src/common/guards/graphql-jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
+import { User } from 'src/users/models/user.model';
 
 @Resolver(() => Todo)
 export class TodoResolver {
@@ -89,8 +91,9 @@ export class TodoResolver {
   @Mutation(() => Todo)
   async addTodo(
     @Args('createTodoData') createTodoData: CreateTodoInput,
+    @CurrentUser() user: User,
   ): Promise<Todo> {
-    return this.todosService.create(createTodoData);
+    return this.todosService.create(user.id, createTodoData);
   }
 
   @UseGuards(GraphqlJwtAuthGuard)

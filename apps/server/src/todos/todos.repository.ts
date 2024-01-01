@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Repository, IsNull, FindOptionsWhere, DataSource } from 'typeorm';
 import { Todo } from './models/todo.model';
-import { SortOrder } from '../common/modules/pagination/const';
 import { TodoFilterType } from './models/todo-filter-type.model';
+import { SortOrder } from 'src/common/modules/pagination/const';
 
 export interface FindAndCountTodosProps {
   readonly parentId: string | undefined;
@@ -21,6 +21,7 @@ export interface FindOneTodoProps {
 export interface CreateTodoProps {
   readonly title: string;
   readonly parentId?: string;
+  readonly ownerId: string;
 }
 
 export interface DeleteTodoProps {
@@ -93,6 +94,7 @@ export class TodosRepository extends Repository<Todo> {
       this.create({
         title: props.title,
         parent: { id: props.parentId },
+        owner: { id: props.ownerId },
       }),
     );
 

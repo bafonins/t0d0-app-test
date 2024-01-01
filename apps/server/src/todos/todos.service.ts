@@ -80,9 +80,10 @@ export class TodosService {
     return todo ? todo.parent : undefined;
   }
 
-  async create(data: CreateTodoInput): Promise<Todo> {
+  async create(ownerId: string, data: CreateTodoInput): Promise<Todo> {
     const created = await this.todosRepository.createTodo({
       title: data.title,
+      ownerId: ownerId,
       parentId: data.parent?.id,
     });
     await this.pubSubService.publish<TodoSubscriptionMessage>(
