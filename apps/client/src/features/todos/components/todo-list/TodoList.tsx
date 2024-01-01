@@ -11,7 +11,7 @@ import {
   NewTodoInputProps,
 } from "@/features/todos/components/new-todo-input/NewTodoInput";
 import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
-import { Pagination } from "@/shared/components/Pagination";
+import { Pagination } from "@/shared/components/pagination/Pagination";
 import { GetTodoListQueryHookResult, TodoFilterType } from "@gql/gql-generated";
 import styles from "./TodoList.module.css";
 

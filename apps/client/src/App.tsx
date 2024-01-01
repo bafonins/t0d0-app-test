@@ -5,6 +5,7 @@ import {
   TodoFilter,
   TodoFilterProps,
 } from "./features/todos/components/todo-filter/TodoFilter";
+import { Login } from "@/features/auth/components/login/Login";
 import { useCallback, useState } from "react";
 import { TodoFilterType } from "@gql/gql-generated";
 
@@ -22,10 +23,15 @@ function App() {
   return (
     <div className={styles.app}>
       <header>
+        <div className={styles.login}>
+          <Login />
+        </div>
         <h1 className={styles.heading}>T0D0S</h1>
         <TodoFilter value={filter} onFilterChange={handleFilterChange} />
       </header>
-      <TodoList filter={filter} />
+      <main>
+        <TodoList filter={filter} />
+      </main>
     </div>
   );
 }

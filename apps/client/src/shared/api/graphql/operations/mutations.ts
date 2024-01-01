@@ -24,3 +24,15 @@ export const DELETE_DOTO = gql`
     deleteTodo(id: $id)
   }
 `;
+
+export const SIGN_IN = gql`
+  mutation signIn($username: String!) {
+    signIn(signInData: { username: $username }) {
+      token
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
