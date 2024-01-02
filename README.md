@@ -20,7 +20,7 @@
       while I'm not editing the descriptions
 - [ ] I as a user can see the cursor and/or selection of another-user as he selects/types when
       he is editing text - so that we can discuss focused words during our online call.
-- [ ] I as a user can create multiple to-do lists where each list has it's unique URL that I can
+- [x] I as a user can create multiple to-do lists where each list has it's unique URL that I can
       share with my friends - so that I could have separate to do lists for my groceries and
       work related tasks
 - [ ] In addition to regular to-do tasks, I as a user can add “special” typed to-do items, that
