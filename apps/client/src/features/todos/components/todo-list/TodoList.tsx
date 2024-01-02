@@ -36,7 +36,6 @@ export const TodoList: FC<TodoListProps> = (props) => {
     filter,
     refetchParent = refetchParentNoop,
   } = props;
-  console.log("rerender");
 
   const { user } = useAuthContext();
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({

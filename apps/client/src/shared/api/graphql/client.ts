@@ -6,9 +6,15 @@ import {
   GqlWsLink,
   GqlLink,
 } from "@/shared/api/graphql/types";
-import { StrictTypedTypePolicies } from "@gql/gql-generated";
-import { split, getMainDefinition } from "@/shared/api/graphql/utils";
+import {
+  split,
+  getMainDefinition,
+  onErrorLink,
+} from "@/shared/api/graphql/utils";
 import { getToken } from "@/shared/storage";
+import { StrictTypedTypePolicies } from "@gql/gql-generated";
+import { notification } from "@/shared/components/notification";
+
 const typePolicies: StrictTypedTypePolicies = {
   Todo: {
     keyFields: ["id"],
@@ -40,6 +46,17 @@ export const createGqlClient = (httpUri: string, wsUri: string) => {
     return forward(operation);
   });
 
+  const errorMiddleware = onErrorLink(({ graphQLErrors, networkError }) => {
+    if (graphQLErrors)
+      graphQLErrors.forEach(({ message }) => {
+        notification.error(`Error: ${message}`);
+      });
+
+    if (networkError) {
+      notification.error(`Network error: ${networkError.message}`);
+    }
+  });
+
   const splitLink = split(
     ({ query }) => {
       const definition = getMainDefinition(query);
@@ -49,7 +66,7 @@ export const createGqlClient = (httpUri: string, wsUri: string) => {
       );
     },
     wsLink,
-    authMiddleware.concat(httpLink)
+    GqlLink.from([authMiddleware, errorMiddleware, httpLink])
   );
 
   return new GqlClient({
