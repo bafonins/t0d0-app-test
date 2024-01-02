@@ -226,6 +226,13 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { readonly __typename?: 'Query', readonly me: { readonly __typename?: 'User', readonly id: string, readonly username: string } };
 
+export type GetTodoQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+
+export type GetTodoQuery = { readonly __typename?: 'Query', readonly todo: { readonly __typename?: 'Todo', readonly id: string, readonly title: string, readonly completed: boolean, readonly frozen: boolean, readonly parent?: { readonly __typename?: 'Todo', readonly id: string } | null, readonly todos: { readonly __typename?: 'TodoList', readonly page: { readonly __typename?: 'PaginationInfo', readonly itemCount: number } } } };
+
 export type OnTodoUpdatedSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -522,6 +529,57 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeSuspenseQueryHookResult = ReturnType<typeof useMeSuspenseQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const GetTodoDocument = gql`
+    query getTodo($id: String!) {
+  todo(id: $id) {
+    id
+    title
+    completed
+    frozen
+    parent {
+      id
+    }
+    todos(pageData: {page: 1, take: 1, order: DESC}) {
+      page {
+        itemCount
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetTodoQuery__
+ *
+ * To run a query within a React component, call `useGetTodoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTodoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTodoQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetTodoQuery(baseOptions: Apollo.QueryHookOptions<GetTodoQuery, GetTodoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTodoQuery, GetTodoQueryVariables>(GetTodoDocument, options);
+      }
+export function useGetTodoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTodoQuery, GetTodoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTodoQuery, GetTodoQueryVariables>(GetTodoDocument, options);
+        }
+export function useGetTodoSuspenseQuery(baseOptions?: Apollo.SuspenseQueryHookOptions<GetTodoQuery, GetTodoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetTodoQuery, GetTodoQueryVariables>(GetTodoDocument, options);
+        }
+export type GetTodoQueryHookResult = ReturnType<typeof useGetTodoQuery>;
+export type GetTodoLazyQueryHookResult = ReturnType<typeof useGetTodoLazyQuery>;
+export type GetTodoSuspenseQueryHookResult = ReturnType<typeof useGetTodoSuspenseQuery>;
+export type GetTodoQueryResult = Apollo.QueryResult<GetTodoQuery, GetTodoQueryVariables>;
 export const OnTodoUpdatedDocument = gql`
     subscription onTodoUpdated {
   todoSubscriptionUpdate {
