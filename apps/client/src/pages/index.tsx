@@ -5,6 +5,7 @@ import { useOnTodoUpdatedSubscription } from "@/features/todos/hooks/useOnTodoUp
 import { Login } from "@/features/auth/components/login/Login";
 import { Link } from "@/shared/components/link/Link";
 import { TodoOverview } from "./todo-overview/TodoOverview";
+import { NotificationsContainer } from "@/shared/components/notification/NofiticationsContainer";
 
 import styles from "./pages.module.css";
 
@@ -25,6 +26,7 @@ export const RootPage: FC = () => {
         <Route path="/:todoId" Component={TodoOverview} />
         <Route path="/" Component={TodosListOverview} />
       </Routes>
+      <NotificationsContainer />
     </div>
   );
 };
