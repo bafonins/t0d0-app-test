@@ -1,0 +1,19 @@
+.pages {
+  position: relative;
+  margin-top: 200px;
+  min-width: 320px;
+}
+
+.navigation {
+  position: absolute;
+  margin: 0;
+  top: -180px;
+  right: left;
+}
+
+.login {
+  position: absolute;
+  margin: 0;
+  top: -180px;
+  right: 0;
+}

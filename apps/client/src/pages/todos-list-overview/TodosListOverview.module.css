@@ -1,0 +1,9 @@
+.heading {
+  position: absolute;
+  margin: 0;
+  top: -150px;
+  width: 100%;
+  font-size: 100px;
+  font-weight: 100;
+  text-align: center;
+}
