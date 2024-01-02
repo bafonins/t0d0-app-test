@@ -1,9 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
+import { BrowserRouter } from "react-router-dom";
 import { createGqlClient } from "@/shared/api/graphql/client";
 import { GqlProviderComponent } from "@/shared/api/graphql/types";
 import { AuthProvider } from "@/features/auth/providers/AuthProvider.tsx";
+import { RootPage } from "@/pages";
+
 import "./index.css";
 
 const client = createGqlClient(
@@ -15,7 +17,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <GqlProviderComponent client={client}>
       <AuthProvider>
-        <App />
+        <BrowserRouter>
+          <RootPage />
+        </BrowserRouter>
       </AuthProvider>
     </GqlProviderComponent>
   </React.StrictMode>

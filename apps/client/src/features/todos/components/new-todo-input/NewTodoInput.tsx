@@ -5,6 +5,7 @@ import {
   KeyboardEventHandler,
   useCallback,
 } from "react";
+
 import styles from "./NewTodoInput.module.css";
 
 export interface NewTodoInputProps {
@@ -16,6 +17,7 @@ export const NewTodoInput: FC<NewTodoInputProps> = (props) => {
   const { onSubmit, isDisabled } = props;
 
   const [todoTitle, setTodoTitle] = useState("");
+
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (event) => {
       setTodoTitle(event.currentTarget.value);

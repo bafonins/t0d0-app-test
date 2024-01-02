@@ -12,9 +12,10 @@ import {
 } from "@/features/todos/components/new-todo-input/NewTodoInput";
 import { useRemoveTodoMutation } from "@/features/todos/hooks/useRemoveTodo";
 import { Pagination } from "@/shared/components/pagination/Pagination";
-import { GetTodoListQueryHookResult, TodoFilterType } from "@gql/gql-generated";
-import styles from "./TodoList.module.css";
 import { useAuthContext } from "@/features/auth/hooks/useAuthContext";
+import { GetTodoListQueryHookResult, TodoFilterType } from "@gql/gql-generated";
+
+import styles from "./TodoList.module.css";
 
 export interface TodoListProps {
   readonly className?: string;
@@ -35,24 +36,22 @@ export const TodoList: FC<TodoListProps> = (props) => {
     filter,
     refetchParent = refetchParentNoop,
   } = props;
+  console.log("rerender");
 
   const { user } = useAuthContext();
   const { todos, loading, page, refetchTodoList } = useGetTodoListQuery({
     parentId: parentId,
     filter: filter,
   });
-  const {
-    itemCount = 0,
-    hasNextPage = false,
-    hasPreviousPage = false,
-  } = page || {};
-  const hasTodos = itemCount > 0;
-  const showPagination = hasTodos && (hasNextPage || hasPreviousPage);
-
   const { addNewTodo } = useAddNewTodoMutation([
     refetchTodoList,
     refetchParent,
   ]);
+  const { removeTodo } = useRemoveTodoMutation([
+    refetchTodoList,
+    refetchParent,
+  ]);
+
   const handleAddNewTodo: NewTodoInputProps["onSubmit"] = useCallback(
     (title) => {
       addNewTodo({
@@ -62,10 +61,6 @@ export const TodoList: FC<TodoListProps> = (props) => {
     },
     [addNewTodo, parentId]
   );
-  const { removeTodo } = useRemoveTodoMutation([
-    refetchTodoList,
-    refetchParent,
-  ]);
   const handleNextPageChange = useCallback(() => {
     if (page?.hasNextPage) {
       refetchTodoList({ parentId: parentId, page: (page?.page || 1) + 1 });
@@ -85,6 +80,14 @@ export const TodoList: FC<TodoListProps> = (props) => {
     return null;
   }
 
+  const {
+    itemCount = 0,
+    hasNextPage = false,
+    hasPreviousPage = false,
+  } = page || {};
+  const hasTodos = itemCount > 0;
+  const showPagination = hasTodos && (hasNextPage || hasPreviousPage);
+
   return (
     <div className={classNames(styles.listContainer, className)}>
       <div className={styles.inputContainer}>
@@ -103,7 +106,7 @@ export const TodoList: FC<TodoListProps> = (props) => {
               hasChildren={todo.todos.page.itemCount > 0}
               hasParent={parentId !== undefined}
               isCompleted={todo.completed}
-              isFrozen={todo.frozen}
+              isFrozen={isParentFrozen || todo.frozen}
               onRemove={removeTodo}
               refetchParent={refetchTodoList}
             />

@@ -1,8 +1,8 @@
 import { ReactNode, FC, useCallback } from "react";
 import { useApolloClient } from "@apollo/client";
+import { saveToken, clearToken } from "@/shared/storage";
 import { useLoginMutation } from "../hooks/useLogin";
 import { AuthContext, Context } from "../contexts/auth-context";
-import { saveToken, clearToken } from "@/shared/storage";
 
 interface AuthProviderProps {
   readonly children: ReactNode;

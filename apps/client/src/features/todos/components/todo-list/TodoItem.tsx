@@ -6,11 +6,12 @@ import {
   MouseEventHandler,
   ChangeEventHandler,
 } from "react";
-import { GetTodoListQueryHookResult } from "@gql/gql-generated";
 import { TodoList } from "@/features/todos/components/todo-list/TodoList";
 import { useToggleTodoCompletionMutation } from "@/features/todos/hooks/useToggleTodoCompletion";
 import { useFreezeTodoMutation } from "@/features/todos/hooks/useFreezeTodo";
 import { useAuthContext } from "@/features/auth/hooks/useAuthContext";
+import { Link } from "@/shared/components/link/Link";
+import { GetTodoListQueryHookResult } from "@gql/gql-generated";
 
 import styles from "./TodoList.module.css";
 
@@ -37,13 +38,14 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
     refetchParent,
   } = props;
 
-  const { user } = useAuthContext();
   const [isOpened, setIsOpened] = useState<boolean>(false);
+  const { user } = useAuthContext();
   const { freezeTodo } = useFreezeTodoMutation();
+  const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
+
   const handleFreezeTodo = useCallback(() => {
     return freezeTodo({ id: id, frozen: !isFrozen });
   }, [freezeTodo, id, isFrozen]);
-  const { toggleTodoCompletion } = useToggleTodoCompletionMutation();
   const handleTodoCompletionChange: ChangeEventHandler<HTMLInputElement> =
     useCallback(() => {
       return toggleTodoCompletion({
@@ -82,7 +84,9 @@ export const TodoItem: FC<TodoItemProps> = (props) => {
           onChange={handleTodoCompletionChange}
           disabled={!user || isFrozen}
         />
-        <label className={styles.title}>{title}</label>
+        <Link to={`/${id}`}>
+          <label className={styles.title}>{title}</label>
+        </Link>
         <button
           className={styles.freeze}
           onClick={handleFreezeTodo}

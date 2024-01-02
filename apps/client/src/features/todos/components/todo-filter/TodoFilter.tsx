@@ -1,5 +1,4 @@
 import { FC, ChangeEventHandler, useCallback } from "react";
-
 import { TodoFilterType } from "@gql/gql-generated";
 
 import styles from "./TodoFilter.module.css";
@@ -20,6 +19,7 @@ export const TodoFilter: FC<TodoFilterProps> = (props) => {
     },
     [onFilterChange]
   );
+
   return (
     <div className={styles.filter}>
       <label htmlFor="all-filter">All</label>

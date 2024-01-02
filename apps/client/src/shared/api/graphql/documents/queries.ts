@@ -44,3 +44,22 @@ export const GET_ME = gql`
     }
   }
 `;
+
+export const GET_TODO = gql`
+  query getTodo($id: String!) {
+    todo(id: $id) {
+      id
+      title
+      completed
+      frozen
+      parent {
+        id
+      }
+      todos(pageData: { page: 1, take: 1, order: DESC }) {
+        page {
+          itemCount
+        }
+      }
+    }
+  }
+`;
