@@ -51,13 +51,15 @@ import { JwtModule } from '@nestjs/jwt';
               Use for backwards compatibility with GraphQL playground for
               development purposes.
             */
-            'subscriptions-transport-ws': isDev,
+            'subscriptions-transport-ws': true,
             'graphql-ws': !isDev,
           },
           playground: isDev,
-          autoSchemaFile: isDev
-            ? join(process.cwd(), '../..', schemaFile)
-            : false,
+          ...(isDev
+            ? {
+                autoSchemaFile: join(process.cwd(), '../..', schemaFile),
+              }
+            : { typePaths: [join(process.cwd(), '../..', schemaFile)] }),
           sortSchema: true,
         };
       },

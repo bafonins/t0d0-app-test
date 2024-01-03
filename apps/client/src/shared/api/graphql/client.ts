@@ -26,12 +26,12 @@ const typePolicies: StrictTypedTypePolicies = {
 
 export const createGqlClient = (httpUri: string, wsUri: string) => {
   const httpLink = new GqlHttpLink({
-    uri: httpUri,
+    uri: httpUri || `http://${location.host}/graphql`,
   });
 
   const wsLink = new GqlWsLink(
     createClient({
-      url: wsUri,
+      url: wsUri || `ws://${location.host}/graphql`,
     })
   );
 

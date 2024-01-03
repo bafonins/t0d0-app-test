@@ -7,17 +7,18 @@ services:
     ports:
       - "3000:3000"
     env_file:
-      - prod.env
+      - .env.production
     depends_on:
       - db
   db:
     image: postgres:latest
     restart: always
     env_file:
-      - prod.env
+      - .env.production
     ports:
       - "5432:5432"
     volumes:
+      - ./init-db:/docker-entrypoint-initdb.d
       - postgres_data:/var/lib/postgresql/data
 
 volumes:
