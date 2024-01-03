@@ -17,6 +17,8 @@ FROM node:18-alpine
 WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app .
+COPY --from=builder /usr/src/app/apps/client/dist ./apps/client/dist
+COPY --from=builder /usr/src/app/apps/server/dist ./apps/server/dist
 
 EXPOSE 3000
 
