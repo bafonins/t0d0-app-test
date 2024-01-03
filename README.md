@@ -4,6 +4,8 @@ Live version: https://t0d0.bafonins.xyz
 
 The live version of the t0d0 app is hosted on a private [linode](https://www.linode.com/) VPS instance, deployed using github actions, `docker-compose` with traffic routed using `nginx` on the server.
 
+The application was tested **only** on the latest version of Chrome on desktop.
+
 # Commands
 
 ## Development build with docker
