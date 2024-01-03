@@ -1,3 +1,30 @@
+# t0d0 overview
+
+Live version: https://t0d0.bafonins.xyz
+
+The live version of the t0d0 app is hosted on a private [linode](https://www.linode.com/) VPS instance, deployed using github actions, `docker-compose` with traffic routed using `nginx` on the server.
+
+# Tech stack
+
+**t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
+
+**t0d0-app-test** is a comprehensive full-stack application designed for task management, featuring infinite nesting capabilies and real-time collaboration. This project is structured as a monorepo, encopassing both the [apps/client](#client-side) and [apps/server](#server-side) projects. Utilizing [TurboRepo](https://turbo.build) to streamline dependency management and development process.
+
+## Client-side
+
+- [vite](https://vitejs.dev/) - project scaffolding and build tool (TS and HMR built-in)
+- [react.js](https://react.dev/) - UI framework (library 🙃)
+- [apollo-client](https://www.apollographql.com/docs/react/) - state management library + graphql fetching
+- [react-router](https://reactrouter.com/en/main) - SPA client routing library
+- [react-hot-toast](https://react-hot-toast.com/) - premade toast components
+
+## Server-side
+
+- [nest.js](https://nestjs.com/) - node.js framework with DI built-in (with express.js and TS under the hood)
+- [typeorm](https://typeorm.io/) - ORM tool
+- [apollo-server](https://github.com/apollographql/apollo-server) - GraphQL server
+- [passport](https://www.passportjs.org/) - authentication middleware (used for local + jwt auth in the app)
+
 ## Checklist
 
 - [x] (required): I as a user can create to-do items, such as a grocery list
