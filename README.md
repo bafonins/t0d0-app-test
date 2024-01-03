@@ -4,6 +4,24 @@ Live version: https://t0d0.bafonins.xyz
 
 The live version of the t0d0 app is hosted on a private [linode](https://www.linode.com/) VPS instance, deployed using github actions, `docker-compose` with traffic routed using `nginx` on the server.
 
+# Commands
+
+## Development build with docker
+
+Make sure to have `docker` and `docker-compose` installed on your machine. Then run `docker-compose -f docker-compose.dev.yml up --build`. This should start a `PostgreSQL` database (with the `pgAdmin` dashboard) and the t0d0 app.
+
+- `pgAdmin` should be accessible on port `:5050`. Use credentials set in `.env.development` file.
+- `t0d0-app` react.js client served by `vite` should be accessible on port `:5173`
+- `t0d0-app` nest.js server should be accessible on port `:3000`
+  - GraphQL playground should be accessible on the `/graphql` path
+
+## Production build with docker
+
+Make sure to populate `.env.production` file based on `.env.development` example and have `docker` and `docker-compose` install locally. Then run `docker-ompose -f docker-compose.prod.yml up --build`. This should start a `PostrgreSQL` database and the t0d0 app.
+
+- `t0d0-app` nest.js server should be accessible on port `:3000`.
+  Note: in production build `t0d0-app` client is server by the nest.js server as static assets.
+
 # Tech stack
 
 **t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
