@@ -26,7 +26,9 @@ Make sure to populate `.env.production` file based on `.env.development` example
 
 # Tech stack
 
-**t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
+**t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. It is inspired by [TodoMVC](https://todomvc.com/) and [workflowy](https://workflowy.com/).
+
+This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
 
 **t0d0-app-test** is a comprehensive full-stack application designed for task management, featuring infinite nesting capabilies and real-time collaboration. This project is structured as a monorepo, encopassing both the [apps/client](#client-side) and [apps/server](#server-side) projects. Utilizing [TurboRepo](https://turbo.build) to streamline dependency management and development process.
 
@@ -45,7 +47,33 @@ Make sure to populate `.env.production` file based on `.env.development` example
 - [apollo-server](https://github.com/apollographql/apollo-server) - GraphQL server
 - [passport](https://www.passportjs.org/) - authentication middleware (used for local + jwt auth in the app)
 
+# Features
+
+## Authorization
+
+There are 3 global roles authorized in the application.
+
+1. Guests
+
+- Can view todo tasks
+- Can filter todo tasks
+- Can view real-time updates made by other users
+
+2. Authenticated users
+
+- Everything that _Guests_ can do
+- Create todo tasks
+- Delete todo tasks
+- Complete todo tasks
+
+3. Task owners
+
+- Everything that `Authenticated users` can do
+- Freeze/unfreeze created todo tasks
+
 ## Checklist
+
+This sections lists all recruitment assignment tasks.
 
 - [x] (required): I as a user can create to-do items, such as a grocery list
 - [x] (required): I as another user can collaborate in real-time with user - so that we can
