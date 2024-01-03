@@ -17,3 +17,6 @@ npm-debug.log
 # build files
 apps/server/dist
 apps/client/dist
+
+# environment
+.prod.env
