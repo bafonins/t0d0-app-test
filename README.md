@@ -49,6 +49,8 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 
 ## Checklist
 
+This sections lists all recruitment assignment tasks.
+
 - [x] (required): I as a user can create to-do items, such as a grocery list
 - [x] (required): I as another user can collaborate in real-time with user - so that we can
       (for example) edit our family shopping-list together
