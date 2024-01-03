@@ -29,7 +29,7 @@ import { JwtModule } from '@nestjs/jwt';
         password: configService.get<string>('POSTGRES_PASSWORD', '12345'),
         database: configService.get<string>('POSTGRES_DB', 'app-db'),
         entities: [Todo, User],
-        synchronize: configService.get<string>('NODE_ENV') === 'development',
+        synchronize: true,
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
@@ -51,13 +51,15 @@ import { JwtModule } from '@nestjs/jwt';
               Use for backwards compatibility with GraphQL playground for
               development purposes.
             */
-            'subscriptions-transport-ws': isDev,
+            'subscriptions-transport-ws': true,
             'graphql-ws': !isDev,
           },
           playground: isDev,
-          autoSchemaFile: isDev
-            ? join(process.cwd(), '../..', schemaFile)
-            : false,
+          ...(isDev
+            ? {
+                autoSchemaFile: join(process.cwd(), '../..', schemaFile),
+              }
+            : { typePaths: [join(process.cwd(), '../..', schemaFile)] }),
           sortSchema: true,
         };
       },
