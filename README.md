@@ -26,7 +26,9 @@ Make sure to populate `.env.production` file based on `.env.development` example
 
 # Tech stack
 
-**t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
+**t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. It is inspired by [TodoMVC](https://todomvc.com/) and [workflowy](https://workflowy.com/).
+
+This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
 
 **t0d0-app-test** is a comprehensive full-stack application designed for task management, featuring infinite nesting capabilies and real-time collaboration. This project is structured as a monorepo, encopassing both the [apps/client](#client-side) and [apps/server](#server-side) projects. Utilizing [TurboRepo](https://turbo.build) to streamline dependency management and development process.
 
