@@ -4,6 +4,7 @@ import {
   GraphQLSchemaBuilderModule,
 } from '@nestjs/graphql';
 import { TodoResolver } from './todos/todo.resolver';
+import { AuthResolver } from './auth/auth.resolver';
 import { printSchema } from 'graphql';
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
@@ -13,7 +14,7 @@ export async function generateSchema(schemaFile: string) {
   await app.init();
 
   const gqlSchemaFactory = app.get(GraphQLSchemaFactory);
-  const schema = await gqlSchemaFactory.create([TodoResolver]);
+  const schema = await gqlSchemaFactory.create([AuthResolver, TodoResolver]);
 
   try {
     await fs.writeFile(

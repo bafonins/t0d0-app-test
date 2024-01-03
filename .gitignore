@@ -19,4 +19,4 @@ apps/server/dist
 apps/client/dist
 
 # environment
-.prod.env
+prod.env
