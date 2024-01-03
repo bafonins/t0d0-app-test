@@ -47,6 +47,30 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 - [apollo-server](https://github.com/apollographql/apollo-server) - GraphQL server
 - [passport](https://www.passportjs.org/) - authentication middleware (used for local + jwt auth in the app)
 
+# Features
+
+## Authorization
+
+There are 3 global roles authorized in the application.
+
+1. Guests
+
+- Can view todo tasks
+- Can filter todo tasks
+- Can view real-time updates made by other users
+
+2. Authenticated users
+
+- Everything that _Guests_ can do
+- Create todo tasks
+- Delete todo tasks
+- Complete todo tasks
+
+3. Task owners
+
+- Everything that `Authenticated users` can do
+- Freeze/unfreeze created todo tasks
+
 ## Checklist
 
 This sections lists all recruitment assignment tasks.
