@@ -46,7 +46,6 @@
 
 .item.opened > .content .expand {
   transform: rotate(90deg);
-  trasnform-origin: top left;
 }
 
 .item.completed .title {
