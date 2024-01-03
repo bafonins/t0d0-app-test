@@ -1,4 +1,3 @@
-import classNames from "classnames";
 import {
   FC,
   useState,
@@ -6,6 +5,7 @@ import {
   MouseEventHandler,
   ChangeEventHandler,
 } from "react";
+import classNames from "classnames";
 import { TodoList } from "@/features/todos/components/todo-list/TodoList";
 import { useToggleTodoCompletionMutation } from "@/features/todos/hooks/useToggleTodoCompletion";
 import { useFreezeTodoMutation } from "@/features/todos/hooks/useFreezeTodo";

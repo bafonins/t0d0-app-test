@@ -2,7 +2,7 @@
   "scripts": {
     "start:dev": "turbo run start:dev",
     "build": "turbo run build",
-    "start:prod": "npm run build && npm run --workspace server start:prod",
+    "start:prod": "npm run --workspace server start:prod",
     "test": "turbo run test",
     "lint": "turbo run lint",
     "prepare": "husky install"
