@@ -26,6 +26,8 @@ Make sure to populate `.env.production` file based on `.env.development` example
 
 # Tech stack
 
+TL;DR NestJS + NodeJS + PostgreSQL + GraphQL + Apollo + ReactJS
+
 **t0d0-app-test** is a full-stack application to manage tasks with infinite nesting. It is inspired by [TodoMVC](https://todomvc.com/) and [workflowy](https://workflowy.com/).
 
 This project is a monorepo containing [apps/client](#client-side) and [apps/server](#server-side) projects. [Turborepo](https://turbo.build/) is used to orchestrate dependencies and pipelines.
