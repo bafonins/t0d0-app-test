@@ -6,6 +6,56 @@ The live version of the t0d0 app is hosted on a private [linode](https://www.lin
 
 The application was tested **only** on the latest version of Chrome on desktop.
 
+# Project Structure
+
+```
+├── apps
+│   ├── client                      # React.js SPA repo
+│   │   ├── public                  # public assets
+│   │   ├── src
+│   │   │   ├── __generated__       # GraphQL generated files
+│   │   │   ├── app
+│   │   │   ├── assets
+│   │   │   ├── constants
+│   │   │   ├── features            # Feature modules
+│   │   │   │   ├── auth
+│   │   │   │   ├── notifications
+│   │   │   │   └── todos
+│   │   │   ├── pages               # Application pages
+│   │   │   └── shared
+│   │   │       ├── api
+│   │   │       │   └── graphql     # GraphQL api module
+│   │   │       ├── components      # Shared components (not connected)
+│   │   │       └── storage         # Browser storage module
+│   │   ├── README.md
+│   │   └── index.html
+│   └── server                      # Nest.js backend api
+│       ├── src
+│       │   ├── auth
+│       │   │   ├── inputs          # Auth GraphQL inputs
+│       │   │   ├── models          # Auth GraphQL object types
+│       │   │   └── strategies      # Passport strategies
+│       │   ├── common              # Shared files
+│       │   │   ├── decorators      # Common Nest.js decorators
+│       │   │   ├── guards          # Auth guards
+│       │   │   └── modules         # Shared modules
+│       │   │       ├── fieldMask
+│       │   │       ├── pagination
+│       │   │       └── pubsub
+│       │   ├── todos
+│       │   │   ├── dal             # Todos data access layer
+│       │   │   ├── guards
+│       │   │   ├── inputs
+│       │   │   └── models
+│       │   └── users
+│       │       └── models
+│       ├── test
+│       └── README.md
+├── init-db                         # DB init scripts
+├── packages
+└── README.md
+```
+
 # Commands
 
 ## Development build with docker
