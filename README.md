@@ -55,6 +55,20 @@ GraphQL schema is auto generated based on NestJS models (see `schema-generated.g
 
 # Features
 
+## Infinite nesting of todo tasks
+
+There are 2 general types of todo tasks in the application:
+
+- Root task - has no parent
+- Nested task - has parent and can at any level of nesting in the parent-child relation chain.
+
+Each task can have an infinite number of subtasks. This is implemented by self-referencing relationship in PostgreSQL.
+
+### Parent tasks cascade on nested tasks
+
+1. Delete operation on the parent task causes **all** nested tasks to become deleted as well.
+2. Frozen parent tasks blocks any create/delete/update operations on the task and its nested tasks.
+
 ## Authentication
 
 The application implement basic authentication using [passport-local](https://github.com/jaredhanson/passport-local) authentication. For simplicity sake, only a username is required to distinguish between unique users and track todo ownership. After successful initial login [passport-jwt](https://www.npmjs.com/package/passport-jwt) auth is used to authenticate a user. The same [jwt token](https://jwt.io/) is used to authorize users for create,update and delete operations. The token is persisted in `localStorage` and sent as `Authorization: Breader ...token...` in all requests to server when present. It is worth mentioning, that the token has no expiry date. This is done on purpose for simplicity sake. In general, users should receive 2 tokens with expiry date: `access_token` and `refresh_token`.
