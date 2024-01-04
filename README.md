@@ -49,6 +49,10 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 
 # Features
 
+## Pagination
+
+List data in the application is paginated using offset-based pagination. Both, root level and nested todos are paginated with the default page size of 10.
+
 ## Real-time updates
 
 The application uses GraphQL subscriptions running over WebSockets to implement real-time updates. Todo update, create and delete operations are broadcasted to all active users.
