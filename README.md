@@ -47,6 +47,10 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 - [apollo-server](https://github.com/apollographql/apollo-server) - GraphQL server
 - [passport](https://www.passportjs.org/) - authentication middleware (used for local + jwt auth in the app)
 
+## Codegen
+
+GraphQL schema is auto generated based on NestJS models (see `schema-generated.gql` file) on the server side. Then, using [@graphql-codegen](https://github.com/dotansimha/graphql-code-generator) the schema is generated for the client. This process takes care of generating required graphql boilerplate (including types, hooks, apollo-client bindings, etc.). In order to update client-side GraphQL generated files, run `npm run --workspace client codegen` - this should update `src/__generated__/gql-generated.ts` file according to the latest GraphQL schema changes.
+
 # Features
 
 ## Authentication
