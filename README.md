@@ -49,6 +49,10 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 
 # Features
 
+## Authentication
+
+The application implement basic authentication using [passport-local](https://github.com/jaredhanson/passport-local) authentication. For simplicity sake, only a username is required to distinguish between unique users and track todo ownership. After successful initial login [passport-jwt](https://www.npmjs.com/package/passport-jwt) auth is used to authenticate a user. The same [jwt token](https://jwt.io/) is used to authorize users for create,update and delete operations. The token is persisted in `localStorage` and sent as `Authorization: Breader ...token...` in all requests to server when present. It is worth mentioning, that the token has no expiry date. This is done on purpose for simplicity sake. In general, users should receive 2 tokens with expiry date: `access_token` and `refresh_token`.
+
 ## Pagination
 
 List data in the application is paginated using offset-based pagination. Both, root level and nested todos are paginated with the default page size of 10.
