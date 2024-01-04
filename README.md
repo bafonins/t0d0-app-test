@@ -49,6 +49,10 @@ This project is a monorepo containing [apps/client](#client-side) and [apps/serv
 
 # Features
 
+## Real-time updates
+
+The application uses GraphQL subscriptions running over WebSockets to implement real-time updates. Todo update, create and delete operations are broadcasted to all active users.
+
 ## Authorization
 
 There are 3 global roles authorized in the application.
